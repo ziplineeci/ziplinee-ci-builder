@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	contracts "github.com/estafette/estafette-ci-contracts"
-	manifest "github.com/estafette/estafette-ci-manifest"
-	foundation "github.com/estafette/estafette-foundation"
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
+	manifest "github.com/ziplineeci/ziplinee-ci-manifest"
+	foundation "github.com/ziplineeci/ziplinee-foundation"
 )
 
 func TestRunStage(t *testing.T) {

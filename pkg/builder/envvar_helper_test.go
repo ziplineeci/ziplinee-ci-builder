@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	crypt "github.com/estafette/estafette-ci-crypt"
-	manifest "github.com/estafette/estafette-ci-manifest"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
+	crypt "github.com/ziplineeci/ziplinee-ci-crypt"
+	manifest "github.com/ziplineeci/ziplinee-ci-manifest"
 )
 
 func TestOverrideEnvvars(t *testing.T) {

@@ -6,9 +6,9 @@ import (
 	"regexp"
 	"strings"
 
-	crypt "github.com/estafette/estafette-ci-crypt"
-	manifest "github.com/estafette/estafette-ci-manifest"
 	"github.com/rs/zerolog/log"
+	crypt "github.com/ziplineeci/ziplinee-ci-crypt"
+	manifest "github.com/ziplineeci/ziplinee-ci-manifest"
 )
 
 const maxLengthToSkipObfuscation = 3

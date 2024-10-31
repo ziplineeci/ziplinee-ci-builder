@@ -25,12 +25,12 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-	contracts "github.com/estafette/estafette-ci-contracts"
-	manifest "github.com/estafette/estafette-ci-manifest"
-	foundation "github.com/estafette/estafette-foundation"
 	"github.com/logrusorgru/aurora"
 	"github.com/opentracing/opentracing-go"
 	"github.com/rs/zerolog/log"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
+	manifest "github.com/ziplineeci/ziplinee-ci-manifest"
+	foundation "github.com/ziplineeci/ziplinee-foundation"
 	"gopkg.in/yaml.v2"
 )
 

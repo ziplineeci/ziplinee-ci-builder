@@ -3,8 +3,8 @@ package builder
 import (
 	"context"
 
-	contracts "github.com/estafette/estafette-ci-contracts"
-	manifest "github.com/estafette/estafette-ci-manifest"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
+	manifest "github.com/ziplineeci/ziplinee-ci-manifest"
 )
 
 // ContainerRunner allows containers to be started

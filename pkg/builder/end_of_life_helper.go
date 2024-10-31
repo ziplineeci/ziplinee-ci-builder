@@ -10,12 +10,12 @@ import (
 	"os"
 	"time"
 
-	contracts "github.com/estafette/estafette-ci-contracts"
 	"github.com/opentracing-contrib/go-stdlib/nethttp"
 	"github.com/opentracing/opentracing-go"
 	tracingLog "github.com/opentracing/opentracing-go/log"
 	"github.com/rs/zerolog/log"
 	"github.com/sethgrid/pester"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
 )
 
 // EndOfLifeHelper has methods to shutdown the runner after a fatal or successful run

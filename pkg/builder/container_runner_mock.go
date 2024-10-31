@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	contracts "github.com/estafette/estafette-ci-contracts"
-	manifest "github.com/estafette/estafette-ci-manifest"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
+	manifest "github.com/ziplineeci/ziplinee-ci-manifest"
 	gomock "github.com/golang/mock/gomock"
 )
 

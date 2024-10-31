@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	contracts "github.com/estafette/estafette-ci-contracts"
 	"github.com/logrusorgru/aurora"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
 
 	"github.com/olekukonko/tablewriter"
 )

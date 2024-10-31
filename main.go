@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/alecthomas/kingpin"
-	"github.com/estafette/estafette-ci-builder/pkg/builder"
-	contracts "github.com/estafette/estafette-ci-contracts"
-	crypt "github.com/estafette/estafette-ci-crypt"
-	foundation "github.com/estafette/estafette-foundation"
 	"github.com/rs/zerolog/log"
+	"github.com/ziplineeci/ziplinee-ci-builder/pkg/builder"
+	contracts "github.com/ziplineeci/ziplinee-ci-contracts"
+	crypt "github.com/ziplineeci/ziplinee-ci-crypt"
+	foundation "github.com/ziplineeci/ziplinee-foundation"
 )
 
 var (
