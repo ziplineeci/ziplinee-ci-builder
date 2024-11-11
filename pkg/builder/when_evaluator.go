@@ -35,8 +35,8 @@ func (we *whenEvaluator) Evaluate(pipelineName, input string, parameters map[str
 
 	log.Debug().Msgf("[%v] Evaluating when expression \"%v\" with parameters \"%v\"", pipelineName, input, parameters)
 
-	// replace estafette envvars in when clause
-	input = os.Expand(input, we.envvarHelper.getEstafetteEnv)
+	// replace ziplinee envvars in when clause
+	input = os.Expand(input, we.envvarHelper.getZiplineeEnv)
 
 	expression, err := govaluate.NewEvaluableExpression(input)
 	if err != nil {
@@ -61,10 +61,10 @@ func (we *whenEvaluator) Describe(input string, parameters map[string]interface{
 func (we *whenEvaluator) GetParameters() map[string]interface{} {
 
 	parameters := make(map[string]interface{}, 3)
-	parameters["branch"] = we.envvarHelper.getEstafetteEnv("ESTAFETTE_GIT_BRANCH")
-	parameters["trigger"] = we.envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER")
-	parameters["status"] = we.envvarHelper.getEstafetteEnv("ESTAFETTE_BUILD_STATUS")
-	parameters["action"] = we.envvarHelper.getEstafetteEnv("ESTAFETTE_RELEASE_ACTION")
+	parameters["branch"] = we.envvarHelper.getZiplineeEnv("ZIPLINEE_GIT_BRANCH")
+	parameters["trigger"] = we.envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER")
+	parameters["status"] = we.envvarHelper.getZiplineeEnv("ZIPLINEE_BUILD_STATUS")
+	parameters["action"] = we.envvarHelper.getZiplineeEnv("ZIPLINEE_RELEASE_ACTION")
 	parameters["server"] = we.envvarHelper.GetCiServer()
 
 	return parameters

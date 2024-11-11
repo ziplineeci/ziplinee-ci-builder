@@ -139,7 +139,7 @@ func (dr *dockerRunner) GetImageSize(ctx context.Context, containerImage string)
 	return totalSize, nil
 }
 
-func (dr *dockerRunner) StartStageContainer(ctx context.Context, depth int, dir string, envvars map[string]string, stage manifest.EstafetteStage, stageIndex int) (containerID string, err error) {
+func (dr *dockerRunner) StartStageContainer(ctx context.Context, depth int, dir string, envvars map[string]string, stage manifest.ZiplineeStage, stageIndex int) (containerID string, err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "StartStageContainer")
 	defer span.Finish()
@@ -153,39 +153,39 @@ func (dr *dockerRunner) StartStageContainer(ctx context.Context, depth int, dir 
 		return
 	}
 
-	// add custom properties as ESTAFETTE_EXTENSION_... envvar
+	// add custom properties as ZIPLINEE_EXTENSION_... envvar
 	extensionEnvVars := dr.generateExtensionEnvvars(stage.CustomProperties, stage.EnvVars)
 
 	// add stage name to envvars
 	if stage.EnvVars == nil {
 		stage.EnvVars = map[string]string{}
 	}
-	stage.EnvVars["ESTAFETTE_STAGE_NAME"] = stage.Name
+	stage.EnvVars["ZIPLINEE_STAGE_NAME"] = stage.Name
 
 	// get imageID and imageCreatedDate of stage build container
 	imageSHA, imageCreatedDate, err := dr.GetImageInfo(ctx, stage.ContainerImage)
 	if err != nil {
 		log.Err(err)
 	}
-	stage.EnvVars["ESTAFETTE_STAGE_IMAGE_SHA"] = imageSHA
-	stage.EnvVars["ESTAFETTE_STAGE_IMAGE_CREATED_DATE"] = imageCreatedDate
+	stage.EnvVars["ZIPLINEE_STAGE_IMAGE_SHA"] = imageSHA
+	stage.EnvVars["ZIPLINEE_STAGE_IMAGE_CREATED_DATE"] = imageCreatedDate
 
-	// combine and override estafette and global envvars with stage envvars
+	// combine and override ziplinee and global envvars with stage envvars
 	combinedEnvVars := dr.envvarHelper.OverrideEnvvars(envvars, stage.EnvVars, extensionEnvVars)
 
 	// decrypt secrets in all envvars
 	combinedEnvVars = dr.envvarHelper.decryptSecrets(combinedEnvVars, dr.envvarHelper.GetPipelineName())
 
-	// define docker envvars and expand ESTAFETTE_ variables
+	// define docker envvars and expand ZIPLINEE_ variables
 	dockerEnvVars := make([]string, 0)
 	if len(combinedEnvVars) > 0 {
 		for k, v := range combinedEnvVars {
-			dockerEnvVars = append(dockerEnvVars, fmt.Sprintf("%v=%v", k, os.Expand(v, dr.envvarHelper.getEstafetteEnv)))
+			dockerEnvVars = append(dockerEnvVars, fmt.Sprintf("%v=%v", k, os.Expand(v, dr.envvarHelper.getZiplineeEnv)))
 		}
 	}
 
 	// define binds
-	binds = append(binds, fmt.Sprintf("%v:%v", dir, os.Expand(stage.WorkingDirectory, dr.envvarHelper.getEstafetteEnv)))
+	binds = append(binds, fmt.Sprintf("%v:%v", dir, os.Expand(stage.WorkingDirectory, dr.envvarHelper.getZiplineeEnv)))
 
 	// check if this is a trusted image with RunDocker set to true
 	if trustedImage != nil && trustedImage.RunDocker {
@@ -212,7 +212,7 @@ func (dr *dockerRunner) StartStageContainer(ctx context.Context, depth int, dir 
 		AttachStderr: true,
 		Env:          dockerEnvVars,
 		Image:        stage.ContainerImage,
-		WorkingDir:   os.Expand(stage.WorkingDirectory, dr.envvarHelper.getEstafetteEnv),
+		WorkingDir:   os.Expand(stage.WorkingDirectory, dr.envvarHelper.getZiplineeEnv),
 	}
 	if len(stage.Commands) > 0 {
 		if trustedImage != nil && !trustedImage.AllowCommands && len(trustedImage.InjectedCredentialTypes) > 0 {
@@ -284,7 +284,7 @@ func (dr *dockerRunner) StartStageContainer(ctx context.Context, depth int, dir 
 	return
 }
 
-func (dr *dockerRunner) StartServiceContainer(ctx context.Context, envvars map[string]string, service manifest.EstafetteService) (containerID string, err error) {
+func (dr *dockerRunner) StartServiceContainer(ctx context.Context, envvars map[string]string, service manifest.ZiplineeService) (containerID string, err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "StartServiceContainer")
 	defer span.Finish()
@@ -298,34 +298,34 @@ func (dr *dockerRunner) StartServiceContainer(ctx context.Context, envvars map[s
 		return
 	}
 
-	// add custom properties as ESTAFETTE_EXTENSION_... envvar
+	// add custom properties as ZIPLINEE_EXTENSION_... envvar
 	extensionEnvVars := dr.generateExtensionEnvvars(service.CustomProperties, service.EnvVars)
 
 	// add service name to envvars
 	if service.EnvVars == nil {
 		service.EnvVars = map[string]string{}
 	}
-	service.EnvVars["ESTAFETTE_SERVICE_NAME"] = service.Name
+	service.EnvVars["ZIPLINEE_SERVICE_NAME"] = service.Name
 
 	// get imageID and imageCreatedDate of stage build container
 	imageSHA, imageCreatedDate, err := dr.GetImageInfo(ctx, service.ContainerImage)
 	if err != nil {
 		log.Err(err)
 	}
-	service.EnvVars["ESTAFETTE_SERVICE_IMAGE_SHA"] = imageSHA
-	service.EnvVars["ESTAFETTE_SERVICE_IMAGE_CREATED_DATE"] = imageCreatedDate
+	service.EnvVars["ZIPLINEE_SERVICE_IMAGE_SHA"] = imageSHA
+	service.EnvVars["ZIPLINEE_SERVICE_IMAGE_CREATED_DATE"] = imageCreatedDate
 
-	// combine and override estafette and global envvars with pipeline envvars
+	// combine and override ziplinee and global envvars with pipeline envvars
 	combinedEnvVars := dr.envvarHelper.OverrideEnvvars(envvars, service.EnvVars, extensionEnvVars)
 
 	// decrypt secrets in all envvars
 	combinedEnvVars = dr.envvarHelper.decryptSecrets(combinedEnvVars, dr.envvarHelper.GetPipelineName())
 
-	// define docker envvars and expand ESTAFETTE_ variables
+	// define docker envvars and expand ZIPLINEE_ variables
 	dockerEnvVars := make([]string, 0)
 	if len(combinedEnvVars) > 0 {
 		for k, v := range combinedEnvVars {
-			dockerEnvVars = append(dockerEnvVars, fmt.Sprintf("%v=%v", k, os.Expand(v, dr.envvarHelper.getEstafetteEnv)))
+			dockerEnvVars = append(dockerEnvVars, fmt.Sprintf("%v=%v", k, os.Expand(v, dr.envvarHelper.getZiplineeEnv)))
 		}
 	}
 
@@ -432,11 +432,11 @@ func (dr *dockerRunner) StartServiceContainer(ctx context.Context, envvars map[s
 	return
 }
 
-func (dr *dockerRunner) RunReadinessProbeContainer(ctx context.Context, parentStage manifest.EstafetteStage, service manifest.EstafetteService, readiness manifest.ReadinessProbe) (err error) {
+func (dr *dockerRunner) RunReadinessProbeContainer(ctx context.Context, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService, readiness manifest.ReadinessProbe) (err error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "RunReadinessProbeContainer")
 	defer span.Finish()
 
-	readinessProberImage := "estafette/scratch:latest"
+	readinessProberImage := "ziplinee/scratch:latest"
 	isPulled := dr.IsImagePulled(ctx, service.Name+"-prober", readinessProberImage)
 	if !isPulled {
 		err = dr.PullImage(ctx, service.Name+"-prober", parentStage.Name, readinessProberImage)
@@ -455,7 +455,7 @@ func (dr *dockerRunner) RunReadinessProbeContainer(ctx context.Context, parentSt
 			"READINESS_PATH":            readiness.HttpGet.Path,
 			"READINESS_HOSTNAME":        readiness.HttpGet.Host,
 			"READINESS_TIMEOUT_SECONDS": strconv.Itoa(readiness.TimeoutSeconds),
-			"ESTAFETTE_LOG_FORMAT":      "console",
+			"ZIPLINEE_LOG_FORMAT":       "console",
 		}
 	} else {
 		// legacy
@@ -467,29 +467,29 @@ func (dr *dockerRunner) RunReadinessProbeContainer(ctx context.Context, parentSt
 			"READINESS_PATH":            readiness.Path,
 			"READINESS_HOSTNAME":        readiness.Hostname,
 			"READINESS_TIMEOUT_SECONDS": strconv.Itoa(readiness.TimeoutSeconds),
-			"ESTAFETTE_LOG_FORMAT":      "console",
+			"ZIPLINEE_LOG_FORMAT":       "console",
 		}
 	}
 
 	// decrypt secrets in all envvars
 	envvars = dr.envvarHelper.decryptSecrets(envvars, dr.envvarHelper.GetPipelineName())
 
-	// define docker envvars and expand ESTAFETTE_ variables
+	// define docker envvars and expand ZIPLINEE_ variables
 	dockerEnvVars := make([]string, 0)
 	for k, v := range envvars {
-		dockerEnvVars = append(dockerEnvVars, fmt.Sprintf("%v=%v", k, os.Expand(v, dr.envvarHelper.getEstafetteEnv)))
+		dockerEnvVars = append(dockerEnvVars, fmt.Sprintf("%v=%v", k, os.Expand(v, dr.envvarHelper.getZiplineeEnv)))
 	}
 
 	// mount the builder binary and trusted certs into the image
 	binds := make([]string, 0)
-	binds = append(binds, "/estafette-ci-builder:/estafette-ci-builder")
+	binds = append(binds, "/ziplinee-ci-builder:/ziplinee-ci-builder")
 	binds = append(binds, "/etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt")
 
 	// define config
 	config := container.Config{
 		AttachStdout: true,
 		AttachStderr: true,
-		Entrypoint:   []string{"/estafette-ci-builder"},
+		Entrypoint:   []string{"/ziplinee-ci-builder"},
 		Env:          dockerEnvVars,
 		Image:        readinessProberImage,
 	}
@@ -706,7 +706,7 @@ func (dr *dockerRunner) TailContainerLogs(ctx context.Context, containerID, pare
 	return err
 }
 
-func (dr *dockerRunner) StopSingleStageServiceContainers(ctx context.Context, parentStage manifest.EstafetteStage) {
+func (dr *dockerRunner) StopSingleStageServiceContainers(ctx context.Context, parentStage manifest.ZiplineeStage) {
 
 	log.Debug().Msgf("[%v] Stopping single-stage service containers...", parentStage.Name)
 
@@ -964,7 +964,7 @@ func (dr *dockerRunner) CreateNetworks(ctx context.Context) error {
 	// ensure there's at least 1 network for supporting service containers
 	if dr.config.DockerConfig.RunType == contracts.DockerRunTypeDinD && len(dr.config.DockerConfig.Networks) == 0 {
 		dr.config.DockerConfig.Networks = append(dr.config.DockerConfig.Networks, contracts.DockerNetworkConfig{
-			Name: "estafette",
+			Name: "ziplinee",
 		})
 	}
 
@@ -1204,7 +1204,7 @@ func (dr *dockerRunner) initContainerStartVariables(shell string, commands []str
 func (dr *dockerRunner) generateExtensionEnvvars(customProperties map[string]interface{}, envvars map[string]string) (extensionEnvVars map[string]string) {
 	extensionEnvVars = map[string]string{}
 	for k, v := range customProperties {
-		extensionkey := dr.envvarHelper.getEstafetteEnvvarName(fmt.Sprintf("ESTAFETTE_EXTENSION_%v", foundation.ToUpperSnakeCase(k)))
+		extensionkey := dr.envvarHelper.getZiplineeEnvvarName(fmt.Sprintf("ZIPLINEE_EXTENSION_%v", foundation.ToUpperSnakeCase(k)))
 
 		if s, isString := v.(string); isString {
 			// if custom property is of type string add the envvar
@@ -1247,20 +1247,20 @@ func (dr *dockerRunner) generateExtensionEnvvars(customProperties map[string]int
 		customProperties["env"] = envvars
 	}
 
-	// also add add custom properties as json object in ESTAFETTE_EXTENSION_CUSTOM_PROPERTIES envvar
+	// also add add custom properties as json object in ZIPLINEE_EXTENSION_CUSTOM_PROPERTIES envvar
 	customPropertiesBytes, err := json.Marshal(customProperties)
 	if err == nil {
-		extensionEnvVars["ESTAFETTE_EXTENSION_CUSTOM_PROPERTIES"] = string(customPropertiesBytes)
+		extensionEnvVars["ZIPLINEE_EXTENSION_CUSTOM_PROPERTIES"] = string(customPropertiesBytes)
 	} else {
-		log.Warn().Err(err).Interface("customProperty", customProperties).Msg("Cannot marshal custom properties for ESTAFETTE_EXTENSION_CUSTOM_PROPERTIES envvar")
+		log.Warn().Err(err).Interface("customProperty", customProperties).Msg("Cannot marshal custom properties for ZIPLINEE_EXTENSION_CUSTOM_PROPERTIES envvar")
 	}
 
-	// also add add custom properties as json object in ESTAFETTE_EXTENSION_CUSTOM_PROPERTIES_YAML envvar
+	// also add add custom properties as json object in ZIPLINEE_EXTENSION_CUSTOM_PROPERTIES_YAML envvar
 	customPropertiesYamlBytes, err := yaml.Marshal(customProperties)
 	if err == nil {
-		extensionEnvVars["ESTAFETTE_EXTENSION_CUSTOM_PROPERTIES_YAML"] = string(customPropertiesYamlBytes)
+		extensionEnvVars["ZIPLINEE_EXTENSION_CUSTOM_PROPERTIES_YAML"] = string(customPropertiesYamlBytes)
 	} else {
-		log.Warn().Err(err).Interface("customProperty", customProperties).Msg("Cannot marshal custom properties for ESTAFETTE_EXTENSION_CUSTOM_PROPERTIES_YAML envvar")
+		log.Warn().Err(err).Interface("customProperty", customProperties).Msg("Cannot marshal custom properties for ZIPLINEE_EXTENSION_CUSTOM_PROPERTIES_YAML envvar")
 	}
 
 	return
@@ -1296,9 +1296,9 @@ func (dr *dockerRunner) generateCredentialsFiles(trustedImage *contracts.Trusted
 				return hostPath, mountPath, innerErr
 			}
 
-			// expand estafette variables in json file
+			// expand ziplinee variables in json file
 			credentialsForTypeString := string(credentialsForTypeBytes)
-			credentialsForTypeString = os.Expand(credentialsForTypeString, dr.envvarHelper.getEstafetteEnv)
+			credentialsForTypeString = os.Expand(credentialsForTypeString, dr.envvarHelper.getZiplineeEnv)
 
 			// write to file
 			err = os.WriteFile(filepath, []byte(credentialsForTypeString), 0666)

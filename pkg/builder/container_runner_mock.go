@@ -164,7 +164,7 @@ func (mr *MockContainerRunnerMockRecorder) PullImage(ctx, stageName, parentStage
 }
 
 // RunReadinessProbeContainer mocks base method.
-func (m *MockContainerRunner) RunReadinessProbeContainer(ctx context.Context, parentStage manifest.EstafetteStage, service manifest.EstafetteService, readiness manifest.ReadinessProbe) error {
+func (m *MockContainerRunner) RunReadinessProbeContainer(ctx context.Context, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService, readiness manifest.ReadinessProbe) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RunReadinessProbeContainer", ctx, parentStage, service, readiness)
 	ret0, _ := ret[0].(error)
@@ -192,7 +192,7 @@ func (mr *MockContainerRunnerMockRecorder) StartDockerDaemon() *gomock.Call {
 }
 
 // StartServiceContainer mocks base method.
-func (m *MockContainerRunner) StartServiceContainer(ctx context.Context, envvars map[string]string, service manifest.EstafetteService) (string, error) {
+func (m *MockContainerRunner) StartServiceContainer(ctx context.Context, envvars map[string]string, service manifest.ZiplineeService) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "StartServiceContainer", ctx, envvars, service)
 	ret0, _ := ret[0].(string)
@@ -207,7 +207,7 @@ func (mr *MockContainerRunnerMockRecorder) StartServiceContainer(ctx, envvars, s
 }
 
 // StartStageContainer mocks base method.
-func (m *MockContainerRunner) StartStageContainer(ctx context.Context, depth int, dir string, envvars map[string]string, stage manifest.EstafetteStage, stageIndex int) (string, error) {
+func (m *MockContainerRunner) StartStageContainer(ctx context.Context, depth int, dir string, envvars map[string]string, stage manifest.ZiplineeStage, stageIndex int) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "StartStageContainer", ctx, depth, dir, envvars, stage, stageIndex)
 	ret0, _ := ret[0].(string)
@@ -246,7 +246,7 @@ func (mr *MockContainerRunnerMockRecorder) StopMultiStageServiceContainers(ctx i
 }
 
 // StopSingleStageServiceContainers mocks base method.
-func (m *MockContainerRunner) StopSingleStageServiceContainers(ctx context.Context, parentStage manifest.EstafetteStage) {
+func (m *MockContainerRunner) StopSingleStageServiceContainers(ctx context.Context, parentStage manifest.ZiplineeStage) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "StopSingleStageServiceContainers", ctx, parentStage)
 }

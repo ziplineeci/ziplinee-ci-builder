@@ -237,10 +237,10 @@ func (elh *endOfLifeHelper) sendBuilderEvent(ctx context.Context, buildStatus co
 	jobName := *elh.config.JobName
 
 	if ciServerBuilderEventsURL != "" && jwt != "" && jobName != "" {
-		// convert EstafetteCiBuilderEvent to json
+		// convert ZiplineeCiBuilderEvent to json
 		var requestBody io.Reader
 
-		ciBuilderEvent := contracts.EstafetteCiBuilderEvent{
+		ciBuilderEvent := contracts.ZiplineeCiBuilderEvent{
 			BuildEventType: buildEventType,
 			JobType:        elh.config.JobType,
 			Build:          elh.config.Build,
@@ -257,7 +257,7 @@ func (elh *endOfLifeHelper) sendBuilderEvent(ctx context.Context, buildStatus co
 
 		data, err := json.Marshal(ciBuilderEvent)
 		if err != nil {
-			log.Error().Err(err).Msgf("Failed marshalling EstafetteCiBuilderEvent for job %v", jobName)
+			log.Error().Err(err).Msgf("Failed marshalling ZiplineeCiBuilderEvent for job %v", jobName)
 			return err
 		}
 		requestBody = bytes.NewReader(data)
@@ -281,7 +281,7 @@ func (elh *endOfLifeHelper) sendBuilderEvent(ctx context.Context, buildStatus co
 		request, ht := nethttp.TraceRequest(span.Tracer(), request)
 
 		// add headers
-		request.Header.Add("X-Estafette-Event-Job-Name", jobName)
+		request.Header.Add("X-Ziplinee-Event-Job-Name", jobName)
 		request.Header.Add("Authorization", fmt.Sprintf("Bearer %v", jwt))
 
 		// perform actual request

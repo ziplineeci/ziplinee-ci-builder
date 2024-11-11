@@ -1,10 +1,10 @@
 FROM docker:20.10.22-dind
 
-LABEL maintainer="estafette.io" \
-      description="The ${ESTAFETTE_GIT_NAME} is the component that runs builds as defined in the .estafette.yaml manifest"
+LABEL maintainer="ziplinee.io" \
+      description="The ${ZIPLINEE_GIT_NAME} is the component that runs builds as defined in the .ziplinee.yaml manifest"
 
 RUN addgroup docker \
-    && mkdir -p /estafette-entrypoints \
+    && mkdir -p /ziplinee-entrypoints \
     && apk update \
     && apk add --no-cache --upgrade \
         openssl \
@@ -13,17 +13,17 @@ RUN addgroup docker \
     && docker version || true
 
 # copy builder & startup script
-COPY ${ESTAFETTE_GIT_NAME} /
+COPY ${ZIPLINEE_GIT_NAME} /
 COPY templates /entrypoint-templates
 COPY daemon.json /
 
-ENV ESTAFETTE_CI_SERVER="estafette" \
-    ESTAFETTE_WORKDIR="/estafette-work" \
-    ESTAFETTE_LOG_FORMAT="v3"
+ENV ZIPLINEE_CI_SERVER="ziplinee" \
+    ZIPLINEE_WORKDIR="/ziplinee-work" \
+    ZIPLINEE_LOG_FORMAT="v3"
 
-WORKDIR ${ESTAFETTE_WORKDIR}
+WORKDIR ${ZIPLINEE_WORKDIR}
 
 VOLUME /tmp
-VOLUME /estafette-work
+VOLUME /ziplinee-work
 
-ENTRYPOINT ["/${ESTAFETTE_GIT_NAME}"]
+ENTRYPOINT ["/${ZIPLINEE_GIT_NAME}"]

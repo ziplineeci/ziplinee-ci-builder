@@ -1,0 +1,391 @@
+builder:
+  track: stable
+
+labels:
+  app-group: ziplinee-ci
+  team: ziplinee
+  language: golang
+
+version:
+  semver:
+    major: 1
+    minor: 4
+    patch: 0
+    releaseBranch: main
+
+stages:
+  build-and-test:
+    parallelStages:
+      test:
+        image: golang:1.17-alpine
+        commands:
+        - apk add --update --no-cache build-base
+        - go test -race ./...
+
+      lint:
+        image: golangci/golangci-lint:latest-alpine
+        commands:
+        - golangci-lint run --timeout 3m
+
+      build:
+        image: golang:1.17-alpine
+        env:
+          CGO_ENABLED: 0
+        commands:
+        - go build -v -ldflags "-X main.appgroup=${ZIPLINEE_LABEL_APP_GROUP} -X
+          main.app=${ZIPLINEE_GIT_NAME} -X
+          main.version=${ZIPLINEE_BUILD_VERSION} -X
+          main.revision=${ZIPLINEE_GIT_REVISION} -X
+          main.branch=${ZIPLINEE_GIT_BRANCH} -X
+          main.buildDate=${ZIPLINEE_BUILD_DATETIME}" -o
+          ./publish/${ZIPLINEE_GIT_NAME}
+
+  tag-revision:
+    image: bitnami/git
+    commands:
+    - git tag v${ZIPLINEE_BUILD_VERSION}
+    - git push origin v${ZIPLINEE_BUILD_VERSION}
+    when: status == 'succeeded' && branch == 'main'
+
+  bake-all:
+    parallelStages:
+      bake:
+        image: extensions/docker:dev
+        action: build
+        severity: unknown
+        dontExpand:
+        - ZIPLINEE_WORKDIR
+        repositories:
+        - ziplinee
+        path: ./publish
+        copy:
+        - templates
+        - daemon.json
+
+      bake-gocd-agent:
+        image: extensions/docker:dev
+        action: build
+        severity: high
+        no-cache: true
+        versionTagSuffix: gocd
+        repositories:
+        - ziplinee
+        path: ./publish
+        copy:
+        - templates
+        dockerfile: Dockerfile.gocd
+
+  before-integration-test:
+    image: golang:1.17-alpine
+    commands:
+    - mkdir -p integration-test
+
+  test:
+    image: ziplinee/ziplinee-ci-builder:${ZIPLINEE_BUILD_VERSION}
+    env:
+      ZIPLINEE_WORKDIR: /ziplinee-work/integration-test
+      BUILDER_CONFIG: '{ "jobType":"build", "track":"dev", "dockerConfig":{
+        "runType":"dind", "mtu":1460 }, "manifest":{ "Builder":{
+        "Track":"stable", "OperatingSystem":"linux" }, "Labels":{
+        "app":"ziplinee-ci-builder", "app-group":"ziplinee-ci",
+        "language":"golang", "team":"ziplinee-team" }, "Version":{ "SemVer":{
+        "Major":0, "Minor":0, "Patch":"{{auto}}", "LabelTemplate":"{{branch}}",
+        "ReleaseBranch":"master" }, "Custom":null }, "GlobalEnvVars":null,
+        "Releases":null },
+
+        "stages":[ { "Name":"services-test", "ContainerImage":"alpine:latest",
+        "Shell":"/bin/sh", "WorkingDirectory":"/ziplinee-work", "Commands": [
+        "route", "ip addr show eth0", "cat /etc/hosts", "cat /etc/resolv.conf",
+        "apk add curl", "curl -v --connect-timeout 2 --retry 10 --retry-delay 2
+        --retry-connrefused http://nginx:80/" ], "When":"status ==
+        ''succeeded''", "EnvVars":null, "AutoInjected":false, "Retries":0,
+        "Services": [ { "Name": "nginx", "ContainerImage": "nginx:alpine",
+        "Shell":"/bin/sh", "When":"status == ''succeeded''", "ReadinessProbe": {
+        "HttpGet": { "Path": "/", "Host": "nginx", "Port": 80, "Scheme": "http"
+        }, "TimeoutSeconds": 30 } }, { "Name": "cockroachdb", "ContainerImage":
+        "cockroachdb/cockroach:v21.1.1", "Commands":[ "/cockroach/cockroach
+        start-single-node --insecure --advertise-addr cockroachdb" ],
+        "EnvVars":{ "COCKROACH_SKIP_ENABLING_DIAGNOSTIC_REPORTING":"true" },
+        "Shell":"/bin/sh", "When":"status == ''succeeded''", "Readiness": {
+        "Path": "/health?ready=1", "TimeoutSeconds": 30, "Hostname":
+        "cockroachdb", "Port": 8080, "Protocol": "http" } } ] }, {
+        "Name":"git-clone", "ContainerImage":"extensions/git-clone:dev",
+        "Shell":"/bin/sh", "WorkingDirectory":"/ziplinee-work", "Commands":null,
+        "shallow": false, "When":"status == ''succeeded''", "EnvVars":null,
+        "AutoInjected":true, "Retries":0, "CustomProperties":null }, {
+        "Name":"parallel-builds", "ContainerImage":"", "Shell":"/bin/sh",
+        "WorkingDirectory":"/ziplinee-work", "Commands":[], "When":"status ==
+        ''succeeded''", "EnvVars":{}, "AutoInjected":false, "Retries":0,
+        "CustomProperties":null, "ParallelStages":[ { "Name":"buildA",
+        "ContainerImage": "golang:1.17-alpine", "Shell":"/bin/sh",
+        "WorkingDirectory":"/ziplinee-work", "Commands":[ "go test ./...", "go
+        build -v -ldflags \"-X main.version=${ZIPLINEE_BUILD_VERSION} -X
+        main.revision=${ZIPLINEE_GIT_REVISION} -X
+        main.branch=${ZIPLINEE_GIT_BRANCH} -X
+        main.buildDate=${ZIPLINEE_BUILD_DATETIME}\" -o
+        ./publish/${ZIPLINEE_GIT_NAME}", "echo $PWD", "ls -latr", "ls -latr
+        ./publish" ], "When":"status == ''succeeded''", "EnvVars":{
+        "CGO_ENABLED":"0", "GOOS":"linux", "GOARCH":"amd64" },
+        "AutoInjected":false, "Retries":0, "CustomProperties":null }, {
+        "Name":"buildB", "ContainerImage":"alpine:3", "Shell":"/bin/sh",
+        "WorkingDirectory":"/ziplinee-work", "Commands":[ "echo hi" ],
+        "When":"status == ''succeeded''" } ] } ],
+
+        "jobName":"build-ziplinee-ziplinee-ci-builder-391855387650326531",
+        "ciServer":{ "baseUrl":"https://httpstat.us/200",
+        "builderEventsUrl":"https://httpstat.us/200",
+        "postLogsUrl":"https://httpstat.us/200",
+        "cancelLogsUrl":"https://httpstat.us/200", "jwt":"",
+        "jwtExpiry":"2031-06-04T15:27:33.397005Z" }, "build":{
+        "ID":"391855387650326531" }, "git":{ "repoSource":"github.com",
+        "repoOwner":"ziplineeci", "repoName":"ziplinee-ci-builder",
+        "repoBranch":"main" }, "version":{ "version":"0.0.0-main", "major":0,
+        "minor":0, "patch":"0", "autoincrement":0 }, "credentials":null,
+        "trustedImages":[ { "path":"extensions/docker", "runDocker":true }, {
+        "path":"ziplineeci/ziplinee-ci-builder", "runPrivileged":true }, {
+        "path":"golang", "runDocker":true, "allowCommands":true }, {
+        "path":"extensions/git-clone" }, { "path":"bsycorp/kind",
+        "runPrivileged":true } ] }'
+      SECRET_DECRYPTION_KEY: "8c6E5e7R8ameE2L6qxEcN5Yc3Q7P4Yd4"
+      ZIPLINEE_LOG_FORMAT: console
+
+  after-integration-test:
+    image: golang:1.17-alpine
+    commands:
+    - rm -rf integration-test
+
+  push-all:
+    parallelStages:
+      push-to-docker-hub:
+        image: extensions/docker:dev
+        action: push
+        repositories:
+        - ziplinee
+
+      push-gocd-agent-to-docker-hub:
+        image: extensions/docker:dev
+        action: push
+        versionTagSuffix: gocd
+        repositories:
+        - ziplinee
+
+  slack-notify:
+    image: extensions/slack-build-status:dev
+    workspace: ziplinee
+    channels:
+    - '#build-status'
+    when: status == 'succeeded' || status == 'failed'
+
+releases:
+  dev:
+    triggers:
+    - pipeline:
+        name: self
+        branch: .+
+    stages:
+      tag-all:
+        parallelStages:
+          tag-container-image:
+            image: extensions/docker:dev
+            action: tag
+            repositories:
+            - ziplinee
+            tags:
+            - dev
+
+          tag-gocd-agent-container-image:
+            image: extensions/docker:dev
+            action: tag
+            versionTagSuffix: gocd
+            repositories:
+            - ziplinee
+            tags:
+            - dev-gocd
+
+  beta:
+    stages:
+      tag-all:
+        parallelStages:
+          tag-container-image:
+            image: extensions/docker:dev
+            action: tag
+            repositories:
+            - ziplinee
+            tags:
+            - beta
+
+          tag-gocd-agent-container-image:
+            image: extensions/docker:dev
+            action: tag
+            versionTagSuffix: gocd
+            repositories:
+            - ziplinee
+            tags:
+            - beta-gocd
+
+      slack-notify:
+        image: extensions/slack-build-status:dev
+        workspace: ziplinee
+        channels:
+        - '#build-status'
+        when: status == 'succeeded' || status == 'failed'
+
+  stable:
+    stages:
+      tag-all:
+        parallelStages:
+          tag-container-image:
+            image: extensions/docker:dev
+            action: tag
+            repositories:
+            - ziplinee
+            tags:
+            - stable
+            - latest
+
+          tag-gocd-agent-container-image:
+            image: extensions/docker:dev
+            action: tag
+            versionTagSuffix: gocd
+            repositories:
+            - ziplinee
+            tags:
+            - stable-gocd
+            - latest-gocd
+
+      slack-notify:
+        image: extensions/slack-build-status:dev
+        workspace: ziplinee
+        channels:
+        - '#build-status'
+        when: status == 'succeeded' || status == 'failed'
+
+  nanoserver-1809-dev:
+    builder:
+      os: windows
+      track: nanoserver-1809-stable
+    # triggers:
+    # - pipeline:
+    #     name: self
+    #     branch: .+
+    clone: true
+    stages:
+      build:
+        image: ziplinee/golang:1.16.0-nanoserver-1809
+        shell: cmd
+        env:
+          CGO_ENABLED: 0
+          GOOS: windows
+          GOARCH: amd64
+        commands:
+        - go build -v -ldflags "-X main.app=%ZIPLINEE_GIT_NAME% -X
+          main.version=%ZIPLINEE_BUILD_VERSION% -X
+          main.revision=%ZIPLINEE_GIT_REVISION% -X
+          main.branch=%ZIPLINEE_GIT_BRANCH% -X
+          main.buildDate=%ZIPLINEE_BUILD_DATETIME%" -o
+          ./publish/%ZIPLINEE_GIT_NAME%.exe
+
+      bake:
+        image: extensions/docker:nanoserver-1809-dev
+        action: build
+        no-cache: true
+        expand-variables: false
+        repositories:
+        - ziplinee
+        dockerfile: Dockerfile.nanoserver-1809
+        path: ./publish
+        copy:
+        - templates
+
+      push-to-docker-hub:
+        image: extensions/docker:nanoserver-1809-dev
+        action: push
+        repositories:
+        - ziplinee
+        tags:
+        - nanoserver-1809-dev
+        pushVersionTag: false
+
+  nanoserver-1809-beta:
+    builder:
+      os: windows
+      track: nanoserver-1809-dev
+    clone: true
+    stages:
+      build:
+        image: ziplinee/golang:1.16.0-nanoserver-1809
+        shell: cmd
+        env:
+          CGO_ENABLED: 0
+          GOOS: windows
+          GOARCH: amd64
+        commands:
+        - go build -v -ldflags "-X main.app=%ZIPLINEE_GIT_NAME% -X
+          main.version=%ZIPLINEE_BUILD_VERSION% -X
+          main.revision=%ZIPLINEE_GIT_REVISION% -X
+          main.branch=%ZIPLINEE_GIT_BRANCH% -X
+          main.buildDate=%ZIPLINEE_BUILD_DATETIME%" -o
+          ./publish/%ZIPLINEE_GIT_NAME%.exe
+
+      bake:
+        image: extensions/docker:nanoserver-1809-dev
+        action: build
+        no-cache: true
+        expand-variables: false
+        repositories:
+        - ziplinee
+        dockerfile: Dockerfile.nanoserver-1809
+        path: ./publish
+        copy:
+        - templates
+
+      push-to-docker-hub:
+        image: extensions/docker:nanoserver-1809-dev
+        action: push
+        repositories:
+        - ziplinee
+        tags:
+        - nanoserver-1809-beta
+        pushVersionTag: false
+
+  nanoserver-1809-stable:
+    builder:
+      os: windows
+      track: nanoserver-1809-stable
+    clone: true
+    stages:
+      build:
+        image: ziplinee/golang:1.16.0-nanoserver-1809
+        shell: cmd
+        env:
+          CGO_ENABLED: 0
+          GOOS: windows
+          GOARCH: amd64
+        commands:
+        - go build -v -ldflags "-X main.app=%ZIPLINEE_GIT_NAME% -X
+          main.version=%ZIPLINEE_BUILD_VERSION% -X
+          main.revision=%ZIPLINEE_GIT_REVISION% -X
+          main.branch=%ZIPLINEE_GIT_BRANCH% -X
+          main.buildDate=%ZIPLINEE_BUILD_DATETIME%" -o
+          ./publish/%ZIPLINEE_GIT_NAME%.exe
+
+      bake:
+        image: extensions/docker:nanoserver-1809-dev
+        action: build
+        no-cache: true
+        expand-variables: false
+        repositories:
+        - ziplinee
+        dockerfile: Dockerfile.nanoserver-1809
+        path: ./publish
+        copy:
+        - templates
+
+      push-to-docker-hub:
+        image: extensions/docker:nanoserver-1809-dev
+        action: push
+        repositories:
+        - ziplinee
+        tags:
+        - nanoserver-1809-stable
+        pushVersionTag: false

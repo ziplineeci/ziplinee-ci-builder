@@ -21,10 +21,10 @@ import (
 // CIBuilder runs builds for different types of integrations
 type CIBuilder interface {
 	RunReadinessProbe(ctx context.Context, scheme, host string, port int, path, hostname string, timeoutSeconds int)
-	RunEstafetteBuildJob(ctx context.Context, pipelineRunner PipelineRunner, containerRunner ContainerRunner, envvarHelper EnvvarHelper, obfuscator Obfuscator, endOfLifeHelper EndOfLifeHelper, builderConfig contracts.BuilderConfig, credentialsBytes []byte, runAsJob bool)
+	RunZiplineeBuildJob(ctx context.Context, pipelineRunner PipelineRunner, containerRunner ContainerRunner, envvarHelper EnvvarHelper, obfuscator Obfuscator, endOfLifeHelper EndOfLifeHelper, builderConfig contracts.BuilderConfig, credentialsBytes []byte, runAsJob bool)
 	RunLocalBuild(ctx context.Context, pipelineRunner PipelineRunner, containerRunner ContainerRunner, envvarHelper EnvvarHelper, builderConfig contracts.BuilderConfig, stagesToRun []string) (err error)
 	RunGocdAgentBuild(ctx context.Context, pipelineRunner PipelineRunner, containerRunner ContainerRunner, envvarHelper EnvvarHelper, obfuscator Obfuscator, builderConfig contracts.BuilderConfig, credentialsBytes []byte)
-	RunEstafetteCLIBuild() error
+	RunZiplineeCLIBuild() error
 }
 
 type ciBuilder struct {
@@ -48,7 +48,7 @@ func (b *ciBuilder) RunReadinessProbe(ctx context.Context, scheme, host string, 
 	os.Exit(0)
 }
 
-func (b *ciBuilder) RunEstafetteBuildJob(ctx context.Context, pipelineRunner PipelineRunner, containerRunner ContainerRunner, envvarHelper EnvvarHelper, obfuscator Obfuscator, endOfLifeHelper EndOfLifeHelper, builderConfig contracts.BuilderConfig, credentialsBytes []byte, runAsJob bool) {
+func (b *ciBuilder) RunZiplineeBuildJob(ctx context.Context, pipelineRunner PipelineRunner, containerRunner ContainerRunner, envvarHelper EnvvarHelper, obfuscator Obfuscator, endOfLifeHelper EndOfLifeHelper, builderConfig contracts.BuilderConfig, credentialsBytes []byte, runAsJob bool) {
 
 	closer := b.initJaeger(b.applicationInfo.App)
 	defer closer.Close()
@@ -95,15 +95,15 @@ func (b *ciBuilder) RunEstafetteBuildJob(ctx context.Context, pipelineRunner Pip
 		}
 	}()
 
-	// unset all ESTAFETTE_ envvars so they don't get abused by non-estafette components
-	envvarHelper.UnsetEstafetteEnvvars()
+	// unset all ZIPLINEE_ envvars so they don't get abused by non-ziplinee components
+	envvarHelper.UnsetZiplineeEnvvars()
 
-	err := envvarHelper.SetEstafetteBuilderConfigEnvvars(builderConfig)
+	err := envvarHelper.SetZiplineeBuilderConfigEnvvars(builderConfig)
 	if err != nil {
-		endOfLifeHelper.HandleFatal(ctx, buildLog, err, "Error setting estafette builder config envvars")
+		endOfLifeHelper.HandleFatal(ctx, buildLog, err, "Error setting ziplinee builder config envvars")
 	}
 
-	if os.Getenv("ESTAFETTE_LOG_FORMAT") == "v3" {
+	if os.Getenv("ZIPLINEE_LOG_FORMAT") == "v3" {
 		// set some default fields added to all logs
 		log.Logger = log.Logger.With().
 			Str("jobName", *builderConfig.JobName).
@@ -128,11 +128,11 @@ func (b *ciBuilder) RunEstafetteBuildJob(ctx context.Context, pipelineRunner Pip
 	// get current working directory
 	dir := envvarHelper.GetWorkDir()
 	if dir == "" {
-		endOfLifeHelper.HandleFatal(ctx, buildLog, nil, "Getting working directory from environment variable ESTAFETTE_WORKDIR failed")
+		endOfLifeHelper.HandleFatal(ctx, buildLog, nil, "Getting working directory from environment variable ZIPLINEE_WORKDIR failed")
 	}
 
 	// set some envvars
-	err = envvarHelper.SetEstafetteGlobalEnvvars()
+	err = envvarHelper.SetZiplineeGlobalEnvvars()
 	if err != nil {
 		endOfLifeHelper.HandleFatal(ctx, buildLog, err, "Setting global environment variables failed")
 	}
@@ -165,15 +165,15 @@ func (b *ciBuilder) RunEstafetteBuildJob(ctx context.Context, pipelineRunner Pip
 		}
 	}
 
-	// collect estafette envvars and run stages from manifest
+	// collect ziplinee envvars and run stages from manifest
 	log.Info().Msgf("Running %v stages", len(stages))
-	estafetteEnvvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(*builderConfig.Manifest)
+	ziplineeEnvvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(*builderConfig.Manifest)
 	if err != nil {
-		endOfLifeHelper.HandleFatal(ctx, buildLog, err, "CollectEstafetteEnvvarsAndLabels failed")
+		endOfLifeHelper.HandleFatal(ctx, buildLog, err, "CollectZiplineeEnvvarsAndLabels failed")
 	}
 
 	globalEnvvars := envvarHelper.CollectGlobalEnvvars(*builderConfig.Manifest)
-	envvars := envvarHelper.OverrideEnvvars(estafetteEnvvars, globalEnvvars)
+	envvars := envvarHelper.OverrideEnvvars(ziplineeEnvvars, globalEnvvars)
 
 	// run stages
 	pipelineRunner.EnableBuilderInfoStageInjection()
@@ -208,13 +208,13 @@ func (b *ciBuilder) RunLocalBuild(ctx context.Context, pipelineRunner PipelineRu
 	}
 
 	// read yaml
-	mft, err := manifest.ReadManifestFromFile(manifest.GetDefaultManifestPreferences(), ".estafette.yaml", true)
+	mft, err := manifest.ReadManifestFromFile(manifest.GetDefaultManifestPreferences(), ".ziplinee.yaml", true)
 	if err != nil {
 		return
 	}
 
 	// select configured stages to run
-	stages := []*manifest.EstafetteStage{}
+	stages := []*manifest.ZiplineeStage{}
 	stageNames := []string{}
 	for _, s := range mft.Stages {
 		stageNames = append(stageNames, s.Name)
@@ -233,8 +233,8 @@ func (b *ciBuilder) RunLocalBuild(ctx context.Context, pipelineRunner PipelineRu
 		return
 	}
 
-	// unset all ESTAFETTE_ envvars so they don't get abused by non-estafette components
-	envvarHelper.UnsetEstafetteEnvvars()
+	// unset all ZIPLINEE_ envvars so they don't get abused by non-ziplinee components
+	envvarHelper.UnsetZiplineeEnvvars()
 
 	// ensure git variables are set
 	err = envvarHelper.SetPipelineName(builderConfig)
@@ -242,21 +242,21 @@ func (b *ciBuilder) RunLocalBuild(ctx context.Context, pipelineRunner PipelineRu
 		return
 	}
 
-	err = envvarHelper.SetEstafetteGlobalEnvvars()
+	err = envvarHelper.SetZiplineeGlobalEnvvars()
 	if err != nil {
 		return
 	}
 
-	// collect estafette and 'global' envvars from manifest
-	estafetteEnvvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(mft)
+	// collect ziplinee and 'global' envvars from manifest
+	ziplineeEnvvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(mft)
 	if err != nil {
 		return
 	}
 
 	globalEnvvars := envvarHelper.CollectGlobalEnvvars(mft)
 
-	// merge estafette and global envvars
-	envvars := envvarHelper.OverrideEnvvars(estafetteEnvvars, globalEnvvars)
+	// merge ziplinee and global envvars
+	envvars := envvarHelper.OverrideEnvvars(ziplineeEnvvars, globalEnvvars)
 
 	// listen to cancellation in order to stop any running pipeline or container
 	go pipelineRunner.StopPipelineOnCancellation(ctx)
@@ -285,9 +285,9 @@ func (b *ciBuilder) RunGocdAgentBuild(ctx context.Context, pipelineRunner Pipeli
 	}
 
 	// read yaml
-	manifest, err := manifest.ReadManifestFromFile(builderConfig.ManifestPreferences, ".estafette.yaml", true)
+	manifest, err := manifest.ReadManifestFromFile(builderConfig.ManifestPreferences, ".ziplinee.yaml", true)
 	if err != nil {
-		fatalHandler.HandleFatal(err, "Reading .estafette.yaml manifest failed")
+		fatalHandler.HandleFatal(err, "Reading .ziplinee.yaml manifest failed")
 	}
 
 	// initialize obfuscator
@@ -304,8 +304,8 @@ func (b *ciBuilder) RunGocdAgentBuild(ctx context.Context, pipelineRunner Pipeli
 
 	// check whether this is a regular build or a release
 	stages := manifest.Stages
-	releaseName := os.Getenv("ESTAFETTE_RELEASE_NAME")
-	buildVersion := os.Getenv("ESTAFETTE_BUILD_VERSION")
+	releaseName := os.Getenv("ZIPLINEE_RELEASE_NAME")
+	buildVersion := os.Getenv("ZIPLINEE_BUILD_VERSION")
 	if releaseName != "" {
 		// check if the release is defined
 		releaseExists := false
@@ -325,21 +325,21 @@ func (b *ciBuilder) RunGocdAgentBuild(ctx context.Context, pipelineRunner Pipeli
 
 	log.Info().Msgf("Running %v stages", len(stages))
 
-	err = envvarHelper.SetEstafetteGlobalEnvvars()
+	err = envvarHelper.SetZiplineeGlobalEnvvars()
 	if err != nil {
 		fatalHandler.HandleFatal(err, "Setting global environment variables failed")
 	}
 
-	// collect estafette and 'global' envvars from manifest
-	estafetteEnvvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+	// collect ziplinee and 'global' envvars from manifest
+	ziplineeEnvvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 	if err != nil {
-		fatalHandler.HandleFatal(err, "CollectEstafetteEnvvarsAndLabels failed")
+		fatalHandler.HandleFatal(err, "CollectZiplineeEnvvarsAndLabels failed")
 	}
 
 	globalEnvvars := envvarHelper.CollectGlobalEnvvars(manifest)
 
-	// merge estafette and global envvars
-	envvars := envvarHelper.OverrideEnvvars(estafetteEnvvars, globalEnvvars)
+	// merge ziplinee and global envvars
+	envvars := envvarHelper.OverrideEnvvars(ziplineeEnvvars, globalEnvvars)
 
 	// run stages
 	buildLogSteps, err := pipelineRunner.RunStages(ctx, 0, stages, dir, envvars)
@@ -352,7 +352,7 @@ func (b *ciBuilder) RunGocdAgentBuild(ctx context.Context, pipelineRunner Pipeli
 	HandleExit(buildLogSteps)
 }
 
-func (b *ciBuilder) RunEstafetteCLIBuild() error {
+func (b *ciBuilder) RunZiplineeCLIBuild() error {
 	return nil
 }
 

@@ -64,7 +64,7 @@ func TestWhenEvaluator(t *testing.T) {
 		parameters := make(map[string]interface{}, 3)
 		parameters["action"] = "deploy-canary"
 		parameters["branch"] = "some-branch"
-		parameters["server"] = "estafette"
+		parameters["server"] = "ziplinee"
 		parameters["status"] = "succeeded"
 		parameters["trigger"] = ""
 
@@ -81,9 +81,9 @@ func TestWhenParameters(t *testing.T) {
 	t.Run("ReturnsMapWithBranchEqualToBranchWithoutTrailingNewline", func(t *testing.T) {
 
 		_, _, envvarHelper, whenEvaluator := getMocks()
-		err := envvarHelper.SetEstafetteGlobalEnvvars()
+		err := envvarHelper.SetZiplineeGlobalEnvvars()
 		assert.Nil(t, err)
-		err = envvarHelper.setEstafetteEnv("ESTAFETTE_BUILD_STATUS", "succeeded")
+		err = envvarHelper.setZiplineeEnv("ZIPLINEE_BUILD_STATUS", "succeeded")
 		assert.Nil(t, err)
 
 		// act
@@ -95,9 +95,9 @@ func TestWhenParameters(t *testing.T) {
 	t.Run("ReturnsMapWithAction", func(t *testing.T) {
 
 		_, _, envvarHelper, whenEvaluator := getMocks()
-		err := envvarHelper.SetEstafetteGlobalEnvvars()
+		err := envvarHelper.SetZiplineeGlobalEnvvars()
 		assert.Nil(t, err)
-		err = envvarHelper.setEstafetteEnv("ESTAFETTE_RELEASE_ACTION", "deploy-canary")
+		err = envvarHelper.setZiplineeEnv("ZIPLINEE_RELEASE_ACTION", "deploy-canary")
 		assert.Nil(t, err)
 
 		// act
@@ -109,9 +109,9 @@ func TestWhenParameters(t *testing.T) {
 	t.Run("ReturnsMapWithStatusSetToSucceededByDefault", func(t *testing.T) {
 
 		_, _, envvarHelper, whenEvaluator := getMocks()
-		err := envvarHelper.SetEstafetteGlobalEnvvars()
+		err := envvarHelper.SetZiplineeGlobalEnvvars()
 		assert.Nil(t, err)
-		err = envvarHelper.setEstafetteEnv("ESTAFETTE_BUILD_STATUS", "succeeded")
+		err = envvarHelper.setZiplineeEnv("ZIPLINEE_BUILD_STATUS", "succeeded")
 		assert.Nil(t, err)
 
 		// act

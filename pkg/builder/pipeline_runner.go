@@ -20,11 +20,11 @@ import (
 
 // PipelineRunner is the interface for running the pipeline steps
 type PipelineRunner interface {
-	RunStage(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.EstafetteStage, stage manifest.EstafetteStage, stageIndex int) (err error)
-	RunService(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, service manifest.EstafetteService) (err error)
-	RunStages(ctx context.Context, depth int, stages []*manifest.EstafetteStage, dir string, envvars map[string]string) (buildLogSteps []*contracts.BuildLogStep, err error)
-	RunParallelStages(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage manifest.EstafetteStage, parallelStages []*manifest.EstafetteStage) (err error)
-	RunServices(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, services []*manifest.EstafetteService) (err error)
+	RunStage(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.ZiplineeStage, stage manifest.ZiplineeStage, stageIndex int) (err error)
+	RunService(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService) (err error)
+	RunStages(ctx context.Context, depth int, stages []*manifest.ZiplineeStage, dir string, envvars map[string]string) (buildLogSteps []*contracts.BuildLogStep, err error)
+	RunParallelStages(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage manifest.ZiplineeStage, parallelStages []*manifest.ZiplineeStage) (err error)
+	RunServices(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, services []*manifest.ZiplineeService) (err error)
 	StopPipelineOnCancellation(ctx context.Context)
 	EnableBuilderInfoStageInjection()
 }
@@ -53,7 +53,7 @@ type pipelineRunner struct {
 	applicationInfo        foundation.ApplicationInfo
 }
 
-func (pr *pipelineRunner) RunStage(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.EstafetteStage, stage manifest.EstafetteStage, stageIndex int) (err error) {
+func (pr *pipelineRunner) RunStage(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.ZiplineeStage, stage manifest.ZiplineeStage, stageIndex int) (err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "RunStage")
 	defer span.Finish()
@@ -61,7 +61,7 @@ func (pr *pipelineRunner) RunStage(ctx context.Context, depth int, dir string, e
 
 	// init some variables
 	parentStageName, stagePlaceholder, autoInjected := pr.initStageVariables(ctx, depth, dir, envvars, parentStage, stage)
-	stage.ContainerImage = os.Expand(stage.ContainerImage, pr.envvarHelper.getEstafetteEnv)
+	stage.ContainerImage = os.Expand(stage.ContainerImage, pr.envvarHelper.getZiplineeEnv)
 
 	log.Debug().Msgf("%v Starting stage", stagePlaceholder)
 
@@ -139,7 +139,7 @@ func (pr *pipelineRunner) RunStage(ctx context.Context, depth int, dir string, e
 	return
 }
 
-func (pr *pipelineRunner) initStageVariables(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.EstafetteStage, stage manifest.EstafetteStage) (parentStageName string, stagePlaceholder string, autoInjected *bool) {
+func (pr *pipelineRunner) initStageVariables(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.ZiplineeStage, stage manifest.ZiplineeStage) (parentStageName string, stagePlaceholder string, autoInjected *bool) {
 
 	if parentStage != nil {
 		parentStageName = parentStage.Name
@@ -152,7 +152,7 @@ func (pr *pipelineRunner) initStageVariables(ctx context.Context, depth int, dir
 	return
 }
 
-func (pr *pipelineRunner) handleStageFinish(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.EstafetteStage, stage manifest.EstafetteStage, dockerRunStart time.Time, errPointer *error) {
+func (pr *pipelineRunner) handleStageFinish(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage *manifest.ZiplineeStage, stage manifest.ZiplineeStage, dockerRunStart time.Time, errPointer *error) {
 
 	err := *errPointer
 
@@ -182,14 +182,14 @@ func (pr *pipelineRunner) handleStageFinish(ctx context.Context, depth int, dir 
 	pr.sendStatusMessage(stage.Name, parentStageName, contracts.LogTypeStage, depth, autoInjected, nil, runDuration, finalStatus)
 }
 
-func (pr *pipelineRunner) RunService(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, service manifest.EstafetteService) (err error) {
+func (pr *pipelineRunner) RunService(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService) (err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "RunService")
 	defer span.Finish()
 	span.SetTag("service", service.Name)
 
 	// init some variables
-	service.ContainerImage = os.Expand(service.ContainerImage, pr.envvarHelper.getEstafetteEnv)
+	service.ContainerImage = os.Expand(service.ContainerImage, pr.envvarHelper.getZiplineeEnv)
 	depth := 1
 
 	log.Info().Msgf("[%v] [%v] Starting service", parentStage.Name, service.Name)
@@ -209,7 +209,7 @@ func (pr *pipelineRunner) RunService(ctx context.Context, envvars map[string]str
 	}
 
 	// start log tailing in background
-	go func(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, service manifest.EstafetteService, containerID string) {
+	go func(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService, containerID string) {
 		var err error
 		defer pr.handleServiceFinish(ctx, envvars, parentStage, service, false, dockerRunStart, &err)
 		err = pr.containerRunner.TailContainerLogs(ctx, containerID, parentStage.Name, service.Name, contracts.LogTypeService, 1, service.MultiStage)
@@ -227,7 +227,7 @@ func (pr *pipelineRunner) RunService(ctx context.Context, envvars map[string]str
 	return
 }
 
-func (pr *pipelineRunner) handleServiceFinish(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, service manifest.EstafetteService, skipSucceeded bool, dockerRunStart time.Time, errPointer *error) {
+func (pr *pipelineRunner) handleServiceFinish(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService, skipSucceeded bool, dockerRunStart time.Time, errPointer *error) {
 
 	err := *errPointer
 
@@ -254,7 +254,7 @@ func (pr *pipelineRunner) handleServiceFinish(ctx context.Context, envvars map[s
 	pr.sendStatusMessage(service.Name, parentStage.Name, contracts.LogTypeService, 1, nil, nil, runDuration, finalStatus)
 }
 
-func (pr *pipelineRunner) RunStages(ctx context.Context, depth int, stages []*manifest.EstafetteStage, dir string, envvars map[string]string) (buildLogSteps []*contracts.BuildLogStep, err error) {
+func (pr *pipelineRunner) RunStages(ctx context.Context, depth int, stages []*manifest.ZiplineeStage, dir string, envvars map[string]string) (buildLogSteps []*contracts.BuildLogStep, err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "RunStages")
 	defer span.Finish()
@@ -291,8 +291,8 @@ func (pr *pipelineRunner) RunStages(ctx context.Context, depth int, stages []*ma
 
 	var finalErr error
 	for _, s := range stages {
-		func(stage *manifest.EstafetteStage) {
-			defer func(stage *manifest.EstafetteStage) {
+		func(stage *manifest.ZiplineeStage) {
+			defer func(stage *manifest.ZiplineeStage) {
 				// handle cancellation happening in between stages
 				if pr.isCanceled(ctx) {
 					// set canceled status for all the next stages
@@ -304,11 +304,11 @@ func (pr *pipelineRunner) RunStages(ctx context.Context, depth int, stages []*ma
 			whenEvaluationResult, err = pr.whenEvaluator.Evaluate(stage.Name, stage.When, pr.whenEvaluator.GetParameters())
 			if err != nil {
 				// set 'failed' build status
-				envErr := pr.envvarHelper.setEstafetteEnv("ESTAFETTE_BUILD_STATUS", "failed")
+				envErr := pr.envvarHelper.setZiplineeEnv("ZIPLINEE_BUILD_STATUS", "failed")
 				if envErr != nil {
-					log.Warn().Err(envErr).Msg("Failed setting ESTAFETTE_BUILD_STATUS to failed")
+					log.Warn().Err(envErr).Msg("Failed setting ZIPLINEE_BUILD_STATUS to failed")
 				}
-				envvars[pr.envvarHelper.getEstafetteEnvvarName("ESTAFETTE_BUILD_STATUS")] = "failed"
+				envvars[pr.envvarHelper.getZiplineeEnvvarName("ZIPLINEE_BUILD_STATUS")] = "failed"
 				finalErr = err
 
 				return
@@ -325,11 +325,11 @@ func (pr *pipelineRunner) RunStages(ctx context.Context, depth int, stages []*ma
 				}
 				if err != nil {
 					// set 'failed' build status
-					envErr := pr.envvarHelper.setEstafetteEnv("ESTAFETTE_BUILD_STATUS", "failed")
+					envErr := pr.envvarHelper.setZiplineeEnv("ZIPLINEE_BUILD_STATUS", "failed")
 					if envErr != nil {
-						log.Warn().Err(envErr).Msg("Failed setting ESTAFETTE_BUILD_STATUS to failed")
+						log.Warn().Err(envErr).Msg("Failed setting ZIPLINEE_BUILD_STATUS to failed")
 					}
-					envvars[pr.envvarHelper.getEstafetteEnvvarName("ESTAFETTE_BUILD_STATUS")] = "failed"
+					envvars[pr.envvarHelper.getZiplineeEnvvarName("ZIPLINEE_BUILD_STATUS")] = "failed"
 					finalErr = err
 				}
 			} else {
@@ -346,7 +346,7 @@ func (pr *pipelineRunner) RunStages(ctx context.Context, depth int, stages []*ma
 	return pr.getLogs(ctx), finalErr
 }
 
-func (pr *pipelineRunner) RunParallelStages(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage manifest.EstafetteStage, parallelStages []*manifest.EstafetteStage) (err error) {
+func (pr *pipelineRunner) RunParallelStages(ctx context.Context, depth int, dir string, envvars map[string]string, parentStage manifest.ZiplineeStage, parallelStages []*manifest.ZiplineeStage) (err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "RunParallelStages")
 	defer span.Finish()
@@ -414,7 +414,7 @@ func (pr *pipelineRunner) RunParallelStages(ctx context.Context, depth int, dir 
 	return g.Wait()
 }
 
-func (pr *pipelineRunner) RunServices(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, services []*manifest.EstafetteService) (err error) {
+func (pr *pipelineRunner) RunServices(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, services []*manifest.ZiplineeService) (err error) {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "RunServices")
 	defer span.Finish()
@@ -425,7 +425,7 @@ func (pr *pipelineRunner) RunServices(ctx context.Context, envvars map[string]st
 	errors := make(chan error, len(services))
 
 	for _, s := range services {
-		go func(ctx context.Context, envvars map[string]string, parentStage manifest.EstafetteStage, service manifest.EstafetteService) {
+		go func(ctx context.Context, envvars map[string]string, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService) {
 			defer wg.Done()
 
 			log.Info().Msgf("[%v] [%v] Starting service...", parentStage.Name, service.Name)
@@ -601,7 +601,7 @@ func (pr *pipelineRunner) sendStatusMessage(step, parentStageName string, contai
 	pr.tailLogsChannel <- tailLogLine
 }
 
-func (pr *pipelineRunner) forceStatusForStage(stage manifest.EstafetteStage, status contracts.LogStatus) {
+func (pr *pipelineRunner) forceStatusForStage(stage manifest.ZiplineeStage, status contracts.LogStatus) {
 
 	var autoInjected *bool
 	var image *contracts.BuildLogStepDockerImage
@@ -660,7 +660,7 @@ func (pr *pipelineRunner) forceStatusForStage(stage manifest.EstafetteStage, sta
 	}
 }
 
-func (pr *pipelineRunner) tailLogs(ctx context.Context, tailLogsDone chan struct{}, stages []*manifest.EstafetteStage) {
+func (pr *pipelineRunner) tailLogs(ctx context.Context, tailLogsDone chan struct{}, stages []*manifest.ZiplineeStage) {
 
 	allLogsReceived := make(chan struct{}, 1)
 
@@ -668,7 +668,7 @@ func (pr *pipelineRunner) tailLogs(ctx context.Context, tailLogsDone chan struct
 		select {
 		case tailLogLine := <-pr.tailLogsChannel:
 
-			// this is for go.cd and local builds with estafette cli
+			// this is for go.cd and local builds with ziplinee cli
 			prefix := getLogPrefix(tailLogLine.Step, tailLogLine.ParentStage)
 			newline := "\n"
 			if tailLogLine.ParentStage != "" {
@@ -926,7 +926,7 @@ func (pr *pipelineRunner) getNestedBuildLogService(tailLogLine contracts.TailLog
 	return nil
 }
 
-func (pr *pipelineRunner) isFinalStageComplete(stages []*manifest.EstafetteStage) bool {
+func (pr *pipelineRunner) isFinalStageComplete(stages []*manifest.ZiplineeStage) bool {
 
 	// pr.buildLogSteps
 	if len(pr.buildLogSteps) > 0 && len(stages) > 0 {

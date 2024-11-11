@@ -21,7 +21,7 @@ var (
 	revision  string
 	buildDate string
 
-	builderConfigFlag       = kingpin.Flag("builder-config", "The Estafette server passes in this json structure to parameterize the build, set trusted images and inject credentials.").Envar("BUILDER_CONFIG").String()
+	builderConfigFlag       = kingpin.Flag("builder-config", "The Ziplinee server passes in this json structure to parameterize the build, set trusted images and inject credentials.").Envar("BUILDER_CONFIG").String()
 	builderConfigPath       = kingpin.Flag("builder-config-path", "The path to the builder config json stored in a mounted file, to parameterize the build, set trusted images and inject credentials.").Envar("BUILDER_CONFIG_PATH").String()
 	secretDecryptionKey     = kingpin.Flag("secret-decryption-key", "The AES-256 key used to decrypt secrets that have been encrypted with it.").Envar("SECRET_DECRYPTION_KEY").String()
 	secretDecryptionKeyPath = kingpin.Flag("secret-decryption-key-path", "The path to the AES-256 key used to decrypt secrets that have been encrypted with it.").Default("/secrets/secretDecryptionKey").OverrideDefaultFromEnvar("SECRET_DECRYPTION_KEY_PATH").String()
@@ -44,7 +44,7 @@ func main() {
 
 	applicationInfo := foundation.NewApplicationInfo(appgroup, app, version, branch, revision, buildDate)
 
-	// init log format from envvar ESTAFETTE_LOG_FORMAT
+	// init log format from envvar ZIPLINEE_LOG_FORMAT
 	foundation.InitLoggingFromEnv(applicationInfo)
 
 	// handle cancellation
@@ -64,7 +64,7 @@ func main() {
 	// bootstrap
 	tailLogsChannel := make(chan contracts.TailLogLine, 10000)
 	obfuscator := builder.NewObfuscator(secretHelper)
-	envvarHelper := builder.NewEnvvarHelper("ESTAFETTE_", secretHelper, obfuscator)
+	envvarHelper := builder.NewEnvvarHelper("ZIPLINEE_", secretHelper, obfuscator)
 	whenEvaluator := builder.NewWhenEvaluator(envvarHelper)
 	builderConfig, originalEncryptedCredentials := loadBuilderConfig(secretHelper, envvarHelper)
 	containerRunner := builder.NewDockerRunner(envvarHelper, obfuscator, builderConfig, tailLogsChannel, true)
@@ -74,9 +74,9 @@ func main() {
 	ciServer := envvarHelper.GetCiServer()
 	if ciServer == "gocd" {
 		ciBuilder.RunGocdAgentBuild(ctx, pipelineRunner, containerRunner, envvarHelper, obfuscator, builderConfig, originalEncryptedCredentials)
-	} else if ciServer == "estafette" {
+	} else if ciServer == "ziplinee" {
 		endOfLifeHelper := builder.NewEndOfLifeHelper(*runAsJob, builderConfig, *podName)
-		ciBuilder.RunEstafetteBuildJob(ctx, pipelineRunner, containerRunner, envvarHelper, obfuscator, endOfLifeHelper, builderConfig, originalEncryptedCredentials, *runAsJob)
+		ciBuilder.RunZiplineeBuildJob(ctx, pipelineRunner, containerRunner, envvarHelper, obfuscator, endOfLifeHelper, builderConfig, originalEncryptedCredentials, *runAsJob)
 	} else {
 		log.Warn().Msgf("The CI Server (\"%s\") is not recognized, exiting.", ciServer)
 	}

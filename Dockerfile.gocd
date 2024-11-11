@@ -1,21 +1,21 @@
 FROM travix/gocd-agent:21.2.0-alpine
 
-MAINTAINER estafette.io
+MAINTAINER ziplinee.io
 
-LABEL maintainer="estafette.io" \
-      description="The ${ESTAFETTE_GIT_NAME} is the component that runs builds as defined in the .estafette.yaml manifest"
+LABEL maintainer="ziplinee.io" \
+      description="The ${ZIPLINEE_GIT_NAME} is the component that runs builds as defined in the .ziplinee.yaml manifest"
 
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
-RUN mkdir -p /estafette-entrypoints \
+RUN mkdir -p /ziplinee-entrypoints \
     && docker version || true
 
 # copy builder
-COPY ${ESTAFETTE_GIT_NAME} /usr/bin/
+COPY ${ZIPLINEE_GIT_NAME} /usr/bin/
 COPY templates /entrypoint-templates
 
 VOLUME /tmp
 VOLUME /var/lib/docker
 VOLUME /var/lib/go-agent/pipelines
 
-ENV ESTAFETTE_CI_SERVER="gocd" \
-    ESTAFETTE_LOG_FORMAT="console"
+ENV ZIPLINEE_CI_SERVER="gocd" \
+    ZIPLINEE_LOG_FORMAT="console"

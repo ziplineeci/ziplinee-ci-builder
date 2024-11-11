@@ -24,10 +24,10 @@ func TestRunStage(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -52,10 +52,10 @@ func TestRunStage(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -80,10 +80,10 @@ func TestRunStage(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -108,10 +108,10 @@ func TestRunStage(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -136,10 +136,10 @@ func TestRunStage(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -167,10 +167,10 @@ func TestRunStage(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -200,10 +200,10 @@ func TestRunStage(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -236,10 +236,10 @@ func TestRunStage(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -276,10 +276,10 @@ func TestRunStage(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -309,10 +309,10 @@ func TestRunStage(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		var parentStage *manifest.EstafetteStage = nil
-		stage := manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = nil
+		stage := manifest.ZiplineeStage{
 			Name:           "stage-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -343,15 +343,15 @@ func TestRunStage(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 1
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stage := manifest.EstafetteStage{
+		stage := manifest.ZiplineeStage{
 			Name:           "nested-stage-0",
 			ContainerImage: "alpine:latest",
 		}
-		var parentStage *manifest.EstafetteStage = &manifest.EstafetteStage{
+		var parentStage *manifest.ZiplineeStage = &manifest.ZiplineeStage{
 			Name: "stage-a",
-			ParallelStages: []*manifest.EstafetteStage{
+			ParallelStages: []*manifest.ZiplineeStage{
 				&stage,
 			},
 		}
@@ -392,10 +392,10 @@ func TestRunService(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -419,10 +419,10 @@ func TestRunService(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -446,10 +446,10 @@ func TestRunService(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -473,10 +473,10 @@ func TestRunService(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -508,10 +508,10 @@ func TestRunService(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 			Readiness:      &manifest.ReadinessProbe{},
@@ -546,10 +546,10 @@ func TestRunService(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 			Readiness:      &manifest.ReadinessProbe{},
@@ -587,10 +587,10 @@ func TestRunService(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -626,10 +626,10 @@ func TestRunService(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 			Readiness:      &manifest.ReadinessProbe{},
@@ -668,10 +668,10 @@ func TestRunService(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 			Readiness:      &manifest.ReadinessProbe{},
@@ -716,10 +716,10 @@ func TestRunService(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 		}
@@ -748,10 +748,10 @@ func TestRunService(t *testing.T) {
 		tailLogsChannel, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		envvars := map[string]string{}
-		parentStage := manifest.EstafetteStage{
+		parentStage := manifest.ZiplineeStage{
 			Name: "stage-a",
 		}
-		service := manifest.EstafetteService{
+		service := manifest.ZiplineeService{
 			Name:           "service-a",
 			ContainerImage: "alpine:latest",
 			Readiness:      &manifest.ReadinessProbe{},
@@ -785,10 +785,10 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
@@ -812,10 +812,10 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
@@ -838,10 +838,10 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
@@ -864,10 +864,10 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
@@ -894,15 +894,15 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-b",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded' || status == 'failed'",
@@ -942,20 +942,20 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-b",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-c",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded' || status == 'failed'",
@@ -991,20 +991,20 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-b",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-c",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded' || status == 'failed'",
@@ -1048,10 +1048,10 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
@@ -1090,9 +1090,9 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
 			{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
@@ -1121,20 +1121,20 @@ func TestRunStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-b",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-c",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded' || status == 'failed'",
@@ -1169,19 +1169,19 @@ func TestRunStagesWithParallelStages(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "stage-a",
 				When: "status == 'succeeded'",
-				ParallelStages: []*manifest.EstafetteStage{
-					&manifest.EstafetteStage{
+				ParallelStages: []*manifest.ZiplineeStage{
+					&manifest.ZiplineeStage{
 						Name:           "nested-stage-0",
 						ContainerImage: "alpine:latest",
 						When:           "status == 'succeeded'",
 					},
-					&manifest.EstafetteStage{
+					&manifest.ZiplineeStage{
 						Name:           "nested-stage-1",
 						ContainerImage: "alpine:latest",
 						When:           "status == 'succeeded'",
@@ -1225,20 +1225,20 @@ func TestRunStagesWithServices(t *testing.T) {
 		_, pipelineRunner := getPipelineRunnerAndMocks(ctrl, containerRunnerMock)
 
 		depth := 0
-		dir := "/estafette-work"
+		dir := "/ziplinee-work"
 		envvars := map[string]string{}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name:           "stage-a",
 				ContainerImage: "alpine:latest",
 				When:           "status == 'succeeded'",
-				Services: []*manifest.EstafetteService{
-					&manifest.EstafetteService{
+				Services: []*manifest.ZiplineeService{
+					&manifest.ZiplineeService{
 						Name:           "nested-service-0",
 						ContainerImage: "alpine:latest",
 						When:           "status == 'succeeded'",
 					},
-					&manifest.EstafetteService{
+					&manifest.ZiplineeService{
 						Name:           "nested-service-1",
 						ContainerImage: "alpine:latest",
 						When:           "status == 'succeeded'",
@@ -1260,7 +1260,7 @@ func TestRunStagesWithServices(t *testing.T) {
 				return nil
 			})
 		containerRunnerMock.EXPECT().StopSingleStageServiceContainers(gomock.Any(), gomock.Any()).DoAndReturn(
-			func(ctx context.Context, parentStage manifest.EstafetteStage) {
+			func(ctx context.Context, parentStage manifest.ZiplineeStage) {
 				wg.Done()
 			})
 		setDefaultMockExpectancies(containerRunnerMock)
@@ -1924,7 +1924,7 @@ func TestIsFinalStageComplete(t *testing.T) {
 		pipelineRunner := pipelineRunner{
 			buildLogSteps: make([]*contracts.BuildLogStep, 0),
 		}
-		stages := []*manifest.EstafetteStage{}
+		stages := []*manifest.ZiplineeStage{}
 
 		// act
 		isComplete := pipelineRunner.isFinalStageComplete(stages)
@@ -1942,8 +1942,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -1964,8 +1964,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -1986,8 +1986,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2008,8 +2008,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2030,8 +2030,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2052,8 +2052,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2074,11 +2074,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "first-stage",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2099,11 +2099,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "first-stage",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2124,11 +2124,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "first-stage",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2149,11 +2149,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "first-stage",
 			},
-			&manifest.EstafetteStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2174,11 +2174,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
-				ParallelStages: []*manifest.EstafetteStage{
-					&manifest.EstafetteStage{
+				ParallelStages: []*manifest.ZiplineeStage{
+					&manifest.ZiplineeStage{
 						Name: "nested-stage",
 					},
 				},
@@ -2207,11 +2207,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
-				ParallelStages: []*manifest.EstafetteStage{
-					&manifest.EstafetteStage{
+				ParallelStages: []*manifest.ZiplineeStage{
+					&manifest.ZiplineeStage{
 						Name: "nested-stage",
 					},
 				},
@@ -2234,11 +2234,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
-				Services: []*manifest.EstafetteService{
-					&manifest.EstafetteService{
+				Services: []*manifest.ZiplineeService{
+					&manifest.ZiplineeService{
 						Name: "nested-service",
 					},
 				},
@@ -2267,11 +2267,11 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
-				Services: []*manifest.EstafetteService{
-					&manifest.EstafetteService{
+				Services: []*manifest.ZiplineeService{
+					&manifest.ZiplineeService{
 						Name: "nested-service",
 					},
 				},
@@ -2304,8 +2304,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}
@@ -2336,8 +2336,8 @@ func TestIsFinalStageComplete(t *testing.T) {
 				},
 			},
 		}
-		stages := []*manifest.EstafetteStage{
-			&manifest.EstafetteStage{
+		stages := []*manifest.ZiplineeStage{
+			&manifest.ZiplineeStage{
 				Name: "last-stage",
 			},
 		}

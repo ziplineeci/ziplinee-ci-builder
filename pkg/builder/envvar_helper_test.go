@@ -47,88 +47,88 @@ func TestOverrideEnvvars(t *testing.T) {
 	})
 }
 
-func TestGetEstafetteEnvvarName(t *testing.T) {
+func TestGetZiplineeEnvvarName(t *testing.T) {
 
-	t.Run("ReturnsKeyNameWithEstafetteUnderscoreReplacedWithEstafetteEnvvarPrefixValue", func(t *testing.T) {
+	t.Run("ReturnsKeyNameWithZiplineeUnderscoreReplacedWithZiplineeEnvvarPrefixValue", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		key := envvarHelper.getEstafetteEnvvarName("ESTAFETTE_KEY")
+		key := envvarHelper.getZiplineeEnvvarName("ZIPLINEE_KEY")
 
 		assert.Equal(t, "TESTPREFIX_KEY", key)
 	})
 }
 
-func TestCollectEstafetteEnvvarsAndLabels(t *testing.T) {
+func TestCollectZiplineeEnvvarsAndLabels(t *testing.T) {
 
-	t.Run("ReturnsEmptyMapIfManifestHasNoLabelsAndNoEnvvarsStartWithEstafette", func(t *testing.T) {
+	t.Run("ReturnsEmptyMapIfManifestHasNoLabelsAndNoEnvvarsStartWithZiplinee", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{}
+		manifest := manifest.ZiplineeManifest{}
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		assert.Equal(t, 0, len(envvars))
 	})
 
-	t.Run("ReturnsOneLabelAsEstafetteLabelLabel", func(t *testing.T) {
+	t.Run("ReturnsOneLabelAsZiplineeLabelLabel", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{Labels: map[string]string{"app": "estafette-ci-builder"}}
+		manifest := manifest.ZiplineeManifest{Labels: map[string]string{"app": "ziplinee-ci-builder"}}
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		_, exists := envvars["TESTPREFIX_LABEL_APP"]
 		assert.True(t, exists)
-		assert.Equal(t, "estafette-ci-builder", envvars["TESTPREFIX_LABEL_APP"])
+		assert.Equal(t, "ziplinee-ci-builder", envvars["TESTPREFIX_LABEL_APP"])
 	})
 
-	t.Run("ReturnsOneLabelAsEstafetteLabelLabelWithSnakeCasing", func(t *testing.T) {
+	t.Run("ReturnsOneLabelAsZiplineeLabelLabelWithSnakeCasing", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{Labels: map[string]string{"owningTeam": "estafette-ci-team"}}
+		manifest := manifest.ZiplineeManifest{Labels: map[string]string{"owningTeam": "ziplinee-ci-team"}}
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		log.Debug().Interface("envvars", envvars).Msg("")
 		_, exists := envvars["TESTPREFIX_LABEL_OWNING_TEAM"]
 		assert.True(t, exists)
-		assert.Equal(t, "estafette-ci-team", envvars["TESTPREFIX_LABEL_OWNING_TEAM"])
+		assert.Equal(t, "ziplinee-ci-team", envvars["TESTPREFIX_LABEL_OWNING_TEAM"])
 	})
 
-	t.Run("ReturnsTwoLabelsAsEstafetteLabelLabel", func(t *testing.T) {
+	t.Run("ReturnsTwoLabelsAsZiplineeLabelLabel", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{Labels: map[string]string{"app": "estafette-ci-builder", "team": "estafette-ci-team"}}
+		manifest := manifest.ZiplineeManifest{Labels: map[string]string{"app": "ziplinee-ci-builder", "team": "ziplinee-ci-team"}}
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		_, exists := envvars["TESTPREFIX_LABEL_APP"]
 		assert.True(t, exists)
-		assert.Equal(t, "estafette-ci-builder", envvars["TESTPREFIX_LABEL_APP"])
+		assert.Equal(t, "ziplinee-ci-builder", envvars["TESTPREFIX_LABEL_APP"])
 
 		_, exists = envvars["TESTPREFIX_LABEL_TEAM"]
 		assert.True(t, exists)
-		assert.Equal(t, "estafette-ci-team", envvars["TESTPREFIX_LABEL_TEAM"])
+		assert.Equal(t, "ziplinee-ci-team", envvars["TESTPREFIX_LABEL_TEAM"])
 	})
 
-	t.Run("ReturnsOneEnvvarStartingWithEstafette", func(t *testing.T) {
+	t.Run("ReturnsOneEnvvarStartingWithZiplinee", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{}
+		manifest := manifest.ZiplineeManifest{}
 		os.Setenv("TESTPREFIX_VERSION", "1.0.3")
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		_, exists := envvars["TESTPREFIX_VERSION"]
@@ -136,14 +136,14 @@ func TestCollectEstafetteEnvvarsAndLabels(t *testing.T) {
 		assert.Equal(t, "1.0.3", envvars["TESTPREFIX_VERSION"])
 	})
 
-	t.Run("ReturnsOneEnvvarStartingWithEstafetteIfValueContainsIsSymbol", func(t *testing.T) {
+	t.Run("ReturnsOneEnvvarStartingWithZiplineeIfValueContainsIsSymbol", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{}
+		manifest := manifest.ZiplineeManifest{}
 		os.Setenv("TESTPREFIX_VERSION", "b=c")
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		_, exists := envvars["TESTPREFIX_VERSION"]
@@ -151,15 +151,15 @@ func TestCollectEstafetteEnvvarsAndLabels(t *testing.T) {
 		assert.Equal(t, "b=c", envvars["TESTPREFIX_VERSION"])
 	})
 
-	t.Run("ReturnsTwoEnvvarsStartingWithEstafette", func(t *testing.T) {
+	t.Run("ReturnsTwoEnvvarsStartingWithZiplinee", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{}
+		manifest := manifest.ZiplineeManifest{}
 		os.Setenv("TESTPREFIX_VERSION", "1.0.3")
-		os.Setenv("TESTPREFIX_GIT_REPOSITORY", "git@github.com:estafette/estafette-ci-builder.git")
+		os.Setenv("TESTPREFIX_GIT_REPOSITORY", "git@github.com:ziplineeci/ziplinee-ci-builder.git")
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		_, exists := envvars["TESTPREFIX_VERSION"]
@@ -168,17 +168,17 @@ func TestCollectEstafetteEnvvarsAndLabels(t *testing.T) {
 
 		_, exists = envvars["TESTPREFIX_GIT_REPOSITORY"]
 		assert.True(t, exists)
-		assert.Equal(t, "git@github.com:estafette/estafette-ci-builder.git", envvars["TESTPREFIX_GIT_REPOSITORY"])
+		assert.Equal(t, "git@github.com:ziplineeci/ziplinee-ci-builder.git", envvars["TESTPREFIX_GIT_REPOSITORY"])
 	})
 
 	t.Run("ReturnsMixOfLabelsAndEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{Labels: map[string]string{"app": "estafette-ci-builder"}}
+		manifest := manifest.ZiplineeManifest{Labels: map[string]string{"app": "ziplinee-ci-builder"}}
 		os.Setenv("TESTPREFIX_VERSION", "1.0.3")
 
 		// act
-		envvars, err := envvarHelper.CollectEstafetteEnvvarsAndLabels(manifest)
+		envvars, err := envvarHelper.CollectZiplineeEnvvarsAndLabels(manifest)
 
 		assert.Nil(t, err)
 		_, exists := envvars["TESTPREFIX_VERSION"]
@@ -187,7 +187,7 @@ func TestCollectEstafetteEnvvarsAndLabels(t *testing.T) {
 
 		_, exists = envvars["TESTPREFIX_LABEL_APP"]
 		assert.True(t, exists)
-		assert.Equal(t, "estafette-ci-builder", envvars["TESTPREFIX_LABEL_APP"])
+		assert.Equal(t, "ziplinee-ci-builder", envvars["TESTPREFIX_LABEL_APP"])
 	})
 }
 
@@ -196,7 +196,7 @@ func TestCollectGlobalEnvvars(t *testing.T) {
 	t.Run("ReturnsEmptyMapIfManifestHasNoGlobalEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{}
+		manifest := manifest.ZiplineeManifest{}
 
 		// act
 		envvars := envvarHelper.CollectGlobalEnvvars(manifest)
@@ -207,7 +207,7 @@ func TestCollectGlobalEnvvars(t *testing.T) {
 	t.Run("ReturnsGlobalEnvvarsIfManifestHasGlobalEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		manifest := manifest.EstafetteManifest{GlobalEnvVars: map[string]string{"VAR_A": "Greetings", "VAR_B": "World"}}
+		manifest := manifest.ZiplineeManifest{GlobalEnvVars: map[string]string{"VAR_A": "Greetings", "VAR_B": "World"}}
 
 		// act
 		envvars := envvarHelper.CollectGlobalEnvvars(manifest)
@@ -218,26 +218,26 @@ func TestCollectGlobalEnvvars(t *testing.T) {
 	})
 }
 
-func TestGetEstafetteEnv(t *testing.T) {
+func TestGetZiplineeEnv(t *testing.T) {
 
-	t.Run("ReturnsEnvironmentVariableValueIfItStartsWithEstafetteUnderscore", func(t *testing.T) {
+	t.Run("ReturnsEnvironmentVariableValueIfItStartsWithZiplineeUnderscore", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
 		os.Setenv("TESTPREFIX_BUILD_STATUS", "succeeded")
 
 		// act
-		result := envvarHelper.getEstafetteEnv("TESTPREFIX_BUILD_STATUS")
+		result := envvarHelper.getZiplineeEnv("TESTPREFIX_BUILD_STATUS")
 
 		assert.Equal(t, "succeeded", result)
 	})
 
-	t.Run("ReturnsEnvironmentVariablePlaceholderIfItDoesNotStartWithEstafetteUnderscore", func(t *testing.T) {
+	t.Run("ReturnsEnvironmentVariablePlaceholderIfItDoesNotStartWithZiplineeUnderscore", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
 		os.Setenv("HOME", "/root")
 
 		// act
-		result := envvarHelper.getEstafetteEnv("HOME")
+		result := envvarHelper.getZiplineeEnv("HOME")
 
 		assert.Equal(t, "${HOME}", result)
 
@@ -246,42 +246,42 @@ func TestGetEstafetteEnv(t *testing.T) {
 
 func TestDecryptSecret(t *testing.T) {
 
-	t.Run("ReturnsOriginalValueIfDoesNotMatchEstafetteSecret", func(t *testing.T) {
+	t.Run("ReturnsOriginalValueIfDoesNotMatchZiplineeSecret", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		result := envvarHelper.decryptSecret("not a secret", "github.com/estafette/estafette-ci-builder")
+		result := envvarHelper.decryptSecret("not a secret", "github.com/ziplineeci/ziplinee-ci-builder")
 
 		assert.Equal(t, "not a secret", result)
 	})
 
-	t.Run("ReturnsUnencryptedValueIfMatchesEstafetteSecret", func(t *testing.T) {
+	t.Run("ReturnsUnencryptedValueIfMatchesZiplineeSecret", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		value := "estafette.secret(deFTz5Bdjg6SUe29.oPIkXbze5G9PNEWS2-ZnArl8BCqHnx4MdTdxHg37th9u)"
+		value := "ziplinee.secret(uZmMgyMrf01fNsGb.R1JW-94cLgQi_CTZ9IQZy_kPpWkp2J5BfH26_TFHNduX)"
 
 		// act
-		result := envvarHelper.decryptSecret(value, "github.com/estafette/estafette-ci-builder")
+		result := envvarHelper.decryptSecret(value, "github.com/ziplineeci/ziplinee-ci-builder")
 
 		assert.Equal(t, "this is my secret", result)
 	})
 
-	t.Run("ReturnsUnencryptedValueIfMatchesEstafetteSecretWithDoubleEqualSign", func(t *testing.T) {
+	t.Run("ReturnsUnencryptedValueIfMatchesZiplineeSecretWithDoubleEqualSign", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		value := "estafette.secret(yOQOYnIJAS1tN5eQ.Xaao3tVnwszu3OJ4XqGO0NMw8Cw0c0V3qA==)"
+		value := "ziplinee.secret(JL-gvON80FpfLXqE.j4cl0_7BOpKbSlAmKGTERmL4nXd53nC7)"
 
 		// act
-		result := envvarHelper.decryptSecret(value, "github.com/estafette/estafette-ci-builder")
+		result := envvarHelper.decryptSecret(value, "github.com/ziplineeci/ziplinee-ci-builder")
 
-		assert.Equal(t, "estafette", result)
+		assert.Equal(t, "ziplinee", result)
 	})
 }
 
 func TestDecryptSecrets(t *testing.T) {
 
-	t.Run("ReturnsOriginalValueIfDoesNotMatchEstafetteSecret", func(t *testing.T) {
+	t.Run("ReturnsOriginalValueIfDoesNotMatchZiplineeSecret", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
 		envvars := map[string]string{
@@ -289,21 +289,21 @@ func TestDecryptSecrets(t *testing.T) {
 		}
 
 		// act
-		result := envvarHelper.decryptSecrets(envvars, "github.com/estafette/estafette-ci-builder")
+		result := envvarHelper.decryptSecrets(envvars, "github.com/ziplineeci/ziplinee-ci-builder")
 
 		assert.Equal(t, 1, len(result))
 		assert.Equal(t, "not a secret", result["SOME_PLAIN_ENVVAR"])
 	})
 
-	t.Run("ReturnsUnencryptedValueIfMatchesEstafetteSecret", func(t *testing.T) {
+	t.Run("ReturnsUnencryptedValueIfMatchesZiplineeSecret", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
 		envvars := map[string]string{
-			"SOME_SECRET": "estafette.secret(deFTz5Bdjg6SUe29.oPIkXbze5G9PNEWS2-ZnArl8BCqHnx4MdTdxHg37th9u)",
+			"SOME_SECRET": "ziplinee.secret(deFTz5Bdjg6SUe29.oPIkXbze5G9PNEWS2-ZnArl8BCqHnx4MdTdxHg37th9u)",
 		}
 
 		// act
-		result := envvarHelper.decryptSecrets(envvars, "github.com/estafette/estafette-ci-builder")
+		result := envvarHelper.decryptSecrets(envvars, "github.com/ziplineeci/ziplinee-ci-builder")
 
 		assert.Equal(t, 1, len(result))
 		assert.Equal(t, "this is my secret", result["SOME_SECRET"])
@@ -317,7 +317,7 @@ func TestGetSourceFromOrigin(t *testing.T) {
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		source := envvarHelper.getSourceFromOrigin("https://github.com/estafette/estafette-gcloud-mig-scaler.git")
+		source := envvarHelper.getSourceFromOrigin("https://github.com/ziplineeci/ziplinee-gcloud-mig-scaler.git")
 
 		assert.Equal(t, "github.com", source)
 	})
@@ -327,7 +327,7 @@ func TestGetSourceFromOrigin(t *testing.T) {
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		source := envvarHelper.getSourceFromOrigin("git@github.com:estafette/estafette-ci-builder.git")
+		source := envvarHelper.getSourceFromOrigin("git@github.com:ziplineeci/ziplinee-ci-builder.git")
 
 		assert.Equal(t, "github.com", source)
 	})
@@ -340,9 +340,9 @@ func TestGetOwnerFromOrigin(t *testing.T) {
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		owner := envvarHelper.getOwnerFromOrigin("https://github.com/estafette/estafette-gcloud-mig-scaler.git")
+		owner := envvarHelper.getOwnerFromOrigin("https://github.com/ziplineeci/ziplinee-gcloud-mig-scaler.git")
 
-		assert.Equal(t, "estafette", owner)
+		assert.Equal(t, "ziplineeci", owner)
 	})
 
 	t.Run("ReturnsOwnerFromGitUrl", func(t *testing.T) {
@@ -350,9 +350,9 @@ func TestGetOwnerFromOrigin(t *testing.T) {
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		owner := envvarHelper.getOwnerFromOrigin("git@github.com:estafette/estafette-ci-builder.git")
+		owner := envvarHelper.getOwnerFromOrigin("git@github.com:ziplineeci/ziplinee-ci-builder.git")
 
-		assert.Equal(t, "estafette", owner)
+		assert.Equal(t, "ziplineeci", owner)
 	})
 }
 
@@ -363,9 +363,9 @@ func TestGetNameFromOrigin(t *testing.T) {
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		name := envvarHelper.getNameFromOrigin("https://github.com/estafette/estafette-gcloud-mig-scaler.git")
+		name := envvarHelper.getNameFromOrigin("https://github.com/ziplineeci/ziplinee-gcloud-mig-scaler.git")
 
-		assert.Equal(t, "estafette-gcloud-mig-scaler", name)
+		assert.Equal(t, "ziplinee-gcloud-mig-scaler", name)
 	})
 
 	t.Run("ReturnsNameFromGitUrl", func(t *testing.T) {
@@ -373,9 +373,9 @@ func TestGetNameFromOrigin(t *testing.T) {
 		_, _, envvarHelper, _ := getMocks()
 
 		// act
-		name := envvarHelper.getNameFromOrigin("git@github.com:estafette/estafette-ci-builder.git")
+		name := envvarHelper.getNameFromOrigin("git@github.com:ziplineeci/ziplinee-ci-builder.git")
 
-		assert.Equal(t, "estafette-ci-builder", name)
+		assert.Equal(t, "ziplinee-ci-builder", name)
 	})
 }
 
@@ -481,80 +481,80 @@ func TestMakeDNSLabelSafe(t *testing.T) {
 	})
 }
 
-func TestSetEstafetteEventEnvvars(t *testing.T) {
+func TestSetZiplineeEventEnvvars(t *testing.T) {
 
 	t.Run("ReturnsPipelineEventPropertiesAsEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		event := manifest.EstafetteEvent{
+		event := manifest.ZiplineeEvent{
 			Fired: true,
-			Pipeline: &manifest.EstafettePipelineEvent{
+			Pipeline: &manifest.ZiplineePipelineEvent{
 				BuildVersion: "1.0.50-some-branch",
 				RepoSource:   "github.com",
-				RepoOwner:    "estafette",
-				RepoName:     "estafette-ci-api",
-				Branch:       "master",
+				RepoOwner:    "ziplineeci",
+				RepoName:     "ziplinee-ci-api",
+				Branch:       "main",
 				Status:       "succeeded",
 				Event:        "finished",
 			},
 		}
 
 		// act
-		err := envvarHelper.setEstafetteEventEnvvars([]manifest.EstafetteEvent{event})
+		err := envvarHelper.setZiplineeEventEnvvars([]manifest.ZiplineeEvent{event})
 
 		assert.Nil(t, err)
-		envvars := envvarHelper.collectEstafetteEnvvars()
+		envvars := envvarHelper.collectZiplineeEnvvars()
 		assert.Equal(t, 7, len(envvars))
-		assert.Equal(t, "1.0.50-some-branch", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_BUILD_VERSION"))
-		assert.Equal(t, "github.com", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_REPO_SOURCE"))
-		assert.Equal(t, "estafette", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_REPO_OWNER"))
-		assert.Equal(t, "estafette-ci-api", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_REPO_NAME"))
-		assert.Equal(t, "master", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_BRANCH"))
-		assert.Equal(t, "succeeded", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_STATUS"))
-		assert.Equal(t, "finished", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_PIPELINE_EVENT"))
+		assert.Equal(t, "1.0.50-some-branch", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_BUILD_VERSION"))
+		assert.Equal(t, "github.com", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_REPO_SOURCE"))
+		assert.Equal(t, "ziplineeci", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_REPO_OWNER"))
+		assert.Equal(t, "ziplinee-ci-api", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_REPO_NAME"))
+		assert.Equal(t, "main", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_BRANCH"))
+		assert.Equal(t, "succeeded", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_STATUS"))
+		assert.Equal(t, "finished", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_PIPELINE_EVENT"))
 	})
 
 	t.Run("ReturnsNamedPipelineEventPropertiesAsEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		event := manifest.EstafetteEvent{
+		event := manifest.ZiplineeEvent{
 			Name:  "upstream",
 			Fired: false,
-			Pipeline: &manifest.EstafettePipelineEvent{
+			Pipeline: &manifest.ZiplineePipelineEvent{
 				BuildVersion: "1.0.50-some-branch",
 				RepoSource:   "github.com",
-				RepoOwner:    "estafette",
-				RepoName:     "estafette-ci-api",
-				Branch:       "master",
+				RepoOwner:    "ziplineeci",
+				RepoName:     "ziplinee-ci-api",
+				Branch:       "main",
 				Status:       "succeeded",
 				Event:        "finished",
 			},
 		}
 
 		// act
-		err := envvarHelper.setEstafetteEventEnvvars([]manifest.EstafetteEvent{event})
+		err := envvarHelper.setZiplineeEventEnvvars([]manifest.ZiplineeEvent{event})
 
 		assert.Nil(t, err)
-		_ = envvarHelper.collectEstafetteEnvvars()
-		assert.Equal(t, "1.0.50-some-branch", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_BUILD_VERSION"))
-		assert.Equal(t, "github.com", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_REPO_SOURCE"))
-		assert.Equal(t, "estafette", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_REPO_OWNER"))
-		assert.Equal(t, "estafette-ci-api", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_REPO_NAME"))
-		assert.Equal(t, "master", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_BRANCH"))
-		assert.Equal(t, "succeeded", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_STATUS"))
-		assert.Equal(t, "finished", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_UPSTREAM_EVENT"))
+		_ = envvarHelper.collectZiplineeEnvvars()
+		assert.Equal(t, "1.0.50-some-branch", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_BUILD_VERSION"))
+		assert.Equal(t, "github.com", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_REPO_SOURCE"))
+		assert.Equal(t, "ziplineeci", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_REPO_OWNER"))
+		assert.Equal(t, "ziplinee-ci-api", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_REPO_NAME"))
+		assert.Equal(t, "main", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_BRANCH"))
+		assert.Equal(t, "succeeded", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_STATUS"))
+		assert.Equal(t, "finished", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_UPSTREAM_EVENT"))
 	})
 
 	t.Run("ReturnsReleaseEventPropertiesAsEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		event := manifest.EstafetteEvent{
+		event := manifest.ZiplineeEvent{
 			Fired: true,
-			Release: &manifest.EstafetteReleaseEvent{
+			Release: &manifest.ZiplineeReleaseEvent{
 				ReleaseVersion: "1.0.50-some-branch",
 				RepoSource:     "github.com",
-				RepoOwner:      "estafette",
-				RepoName:       "estafette-ci-api",
+				RepoOwner:      "ziplineeci",
+				RepoName:       "ziplinee-ci-api",
 				Target:         "development",
 				Status:         "succeeded",
 				Event:          "finished",
@@ -562,79 +562,79 @@ func TestSetEstafetteEventEnvvars(t *testing.T) {
 		}
 
 		// act
-		err := envvarHelper.setEstafetteEventEnvvars([]manifest.EstafetteEvent{event})
+		err := envvarHelper.setZiplineeEventEnvvars([]manifest.ZiplineeEvent{event})
 
 		assert.Nil(t, err)
-		envvars := envvarHelper.collectEstafetteEnvvars()
+		envvars := envvarHelper.collectZiplineeEnvvars()
 		assert.Equal(t, 7, len(envvars))
-		assert.Equal(t, "1.0.50-some-branch", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_RELEASE_VERSION"))
-		assert.Equal(t, "github.com", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_REPO_SOURCE"))
-		assert.Equal(t, "estafette", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_REPO_OWNER"))
-		assert.Equal(t, "estafette-ci-api", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_REPO_NAME"))
-		assert.Equal(t, "development", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_TARGET"))
-		assert.Equal(t, "succeeded", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_STATUS"))
-		assert.Equal(t, "finished", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_RELEASE_EVENT"))
+		assert.Equal(t, "1.0.50-some-branch", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_RELEASE_VERSION"))
+		assert.Equal(t, "github.com", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_REPO_SOURCE"))
+		assert.Equal(t, "ziplineeci", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_REPO_OWNER"))
+		assert.Equal(t, "ziplinee-ci-api", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_REPO_NAME"))
+		assert.Equal(t, "development", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_TARGET"))
+		assert.Equal(t, "succeeded", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_STATUS"))
+		assert.Equal(t, "finished", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_RELEASE_EVENT"))
 	})
 
 	t.Run("ReturnsGitEventPropertiesAsEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		event := manifest.EstafetteEvent{
+		event := manifest.ZiplineeEvent{
 			Fired: true,
-			Git: &manifest.EstafetteGitEvent{
+			Git: &manifest.ZiplineeGitEvent{
 				Event:      "push",
-				Repository: "github.com/estafette/estafette-ci-api",
+				Repository: "github.com/ziplineeci/ziplinee-ci-api",
 				Branch:     "master",
 			},
 		}
 
 		// act
-		err := envvarHelper.setEstafetteEventEnvvars([]manifest.EstafetteEvent{event})
+		err := envvarHelper.setZiplineeEventEnvvars([]manifest.ZiplineeEvent{event})
 
 		assert.Nil(t, err)
-		envvars := envvarHelper.collectEstafetteEnvvars()
+		envvars := envvarHelper.collectZiplineeEnvvars()
 		assert.Equal(t, 3, len(envvars))
-		assert.Equal(t, "push", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_GIT_EVENT"))
-		assert.Equal(t, "github.com/estafette/estafette-ci-api", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_GIT_REPOSITORY"))
-		assert.Equal(t, "master", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_GIT_BRANCH"))
+		assert.Equal(t, "push", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_GIT_EVENT"))
+		assert.Equal(t, "github.com/ziplineeci/ziplinee-ci-api", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_GIT_REPOSITORY"))
+		assert.Equal(t, "master", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_GIT_BRANCH"))
 	})
 
 	t.Run("ReturnsCronEventPropertiesAsEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		event := manifest.EstafetteEvent{
+		event := manifest.ZiplineeEvent{
 			Fired: true,
-			Cron: &manifest.EstafetteCronEvent{
+			Cron: &manifest.ZiplineeCronEvent{
 				Time: time.Date(2009, 11, 17, 20, 34, 58, 651387237, time.UTC),
 			},
 		}
 
 		// act
-		err := envvarHelper.setEstafetteEventEnvvars([]manifest.EstafetteEvent{event})
+		err := envvarHelper.setZiplineeEventEnvvars([]manifest.ZiplineeEvent{event})
 
 		assert.Nil(t, err)
-		envvars := envvarHelper.collectEstafetteEnvvars()
+		envvars := envvarHelper.collectZiplineeEnvvars()
 		assert.Equal(t, 1, len(envvars))
-		assert.Equal(t, "2009-11-17T20:34:58.651387237Z", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_CRON_TIME"))
+		assert.Equal(t, "2009-11-17T20:34:58.651387237Z", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_CRON_TIME"))
 	})
 
 	t.Run("ReturnsManualEventPropertiesAsEnvvars", func(t *testing.T) {
 
 		_, _, envvarHelper, _ := getMocks()
-		event := manifest.EstafetteEvent{
+		event := manifest.ZiplineeEvent{
 			Fired: true,
-			Manual: &manifest.EstafetteManualEvent{
+			Manual: &manifest.ZiplineeManualEvent{
 				UserID: "user@server.com",
 			},
 		}
 
 		// act
-		err := envvarHelper.setEstafetteEventEnvvars([]manifest.EstafetteEvent{event})
+		err := envvarHelper.setZiplineeEventEnvvars([]manifest.ZiplineeEvent{event})
 
 		assert.Nil(t, err)
-		envvars := envvarHelper.collectEstafetteEnvvars()
+		envvars := envvarHelper.collectZiplineeEnvvars()
 		assert.Equal(t, 1, len(envvars))
-		assert.Equal(t, "user@server.com", envvarHelper.getEstafetteEnv("ESTAFETTE_TRIGGER_MANUAL_USER_ID"))
+		assert.Equal(t, "user@server.com", envvarHelper.getZiplineeEnv("ZIPLINEE_TRIGGER_MANUAL_USER_ID"))
 	})
 }
 
@@ -644,7 +644,7 @@ func getMocks() (secretHelper crypt.SecretHelper, obfuscator Obfuscator, envvarH
 	envvarHelper = NewEnvvarHelper("TESTPREFIX_", secretHelper, obfuscator)
 	whenEvaluator = NewWhenEvaluator(envvarHelper)
 
-	envvarHelper.UnsetEstafetteEnvvars()
+	envvarHelper.UnsetZiplineeEnvvars()
 
 	return
 }

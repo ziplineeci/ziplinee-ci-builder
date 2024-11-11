@@ -19,12 +19,12 @@ import (
 	foundation "github.com/ziplineeci/ziplinee-foundation"
 )
 
-// EnvvarHelper is the interface for getting, setting and retrieving ESTAFETTE_ environment variables
+// EnvvarHelper is the interface for getting, setting and retrieving ZIPLINEE_ environment variables
 type EnvvarHelper interface {
 	getCommandOutput(string, ...string) (string, error)
-	SetEstafetteGlobalEnvvars() error
-	SetEstafetteBuilderConfigEnvvars(builderConfig contracts.BuilderConfig) error
-	setEstafetteEventEnvvars(events []manifest.EstafetteEvent) error
+	SetZiplineeGlobalEnvvars() error
+	SetZiplineeBuilderConfigEnvvars(builderConfig contracts.BuilderConfig) error
+	setZiplineeEventEnvvars(events []manifest.ZiplineeEvent) error
 	initGitSource() error
 	initGitOwner() error
 	initGitName() error
@@ -33,15 +33,15 @@ type EnvvarHelper interface {
 	initGitBranch() error
 	initBuildDatetime() error
 	initBuildStatus() error
-	initLabels(manifest.EstafetteManifest) error
-	collectEstafetteEnvvars() map[string]string
-	CollectEstafetteEnvvarsAndLabels(manifest.EstafetteManifest) (map[string]string, error)
-	CollectGlobalEnvvars(manifest.EstafetteManifest) map[string]string
-	UnsetEstafetteEnvvars()
-	getEstafetteEnv(string) string
-	setEstafetteEnv(string, string) error
-	unsetEstafetteEnv(string) error
-	getEstafetteEnvvarName(string) string
+	initLabels(manifest.ZiplineeManifest) error
+	collectZiplineeEnvvars() map[string]string
+	CollectZiplineeEnvvarsAndLabels(manifest.ZiplineeManifest) (map[string]string, error)
+	CollectGlobalEnvvars(manifest.ZiplineeManifest) map[string]string
+	UnsetZiplineeEnvvars()
+	getZiplineeEnv(string) string
+	setZiplineeEnv(string, string) error
+	unsetZiplineeEnv(string) error
+	getZiplineeEnvvarName(string) string
 	OverrideEnvvars(...map[string]string) map[string]string
 	decryptSecret(string, string) string
 	decryptSecrets(map[string]string, string) map[string]string
@@ -75,9 +75,9 @@ type envvarHelper struct {
 func NewEnvvarHelper(prefix string, secretHelper crypt.SecretHelper, obfuscator Obfuscator) EnvvarHelper {
 	return &envvarHelper{
 		prefix:       prefix,
-		ciServer:     os.Getenv("ESTAFETTE_CI_SERVER"),
-		workDir:      os.Getenv("ESTAFETTE_WORKDIR"),
-		tempDir:      os.Getenv("ESTAFETTE_TEMPDIR"),
+		ciServer:     os.Getenv("ZIPLINEE_CI_SERVER"),
+		workDir:      os.Getenv("ZIPLINEE_WORKDIR"),
+		tempDir:      os.Getenv("ZIPLINEE_TEMPDIR"),
 		secretHelper: secretHelper,
 		obfuscator:   obfuscator,
 	}
@@ -93,7 +93,7 @@ func (h *envvarHelper) getCommandOutput(name string, arg ...string) (string, err
 	return strings.TrimSpace(string(out)), nil
 }
 
-func (h *envvarHelper) SetEstafetteGlobalEnvvars() (err error) {
+func (h *envvarHelper) SetZiplineeGlobalEnvvars() (err error) {
 
 	// initialize build datetime envvar
 	err = h.initBuildDatetime()
@@ -151,61 +151,61 @@ func (h *envvarHelper) SetEstafetteGlobalEnvvars() (err error) {
 	return
 }
 
-func (h *envvarHelper) SetEstafetteBuilderConfigEnvvars(builderConfig contracts.BuilderConfig) (err error) {
+func (h *envvarHelper) SetZiplineeBuilderConfigEnvvars(builderConfig contracts.BuilderConfig) (err error) {
 	// set envvars that can be used by any container
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_SOURCE", builderConfig.Git.RepoSource)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_SOURCE", builderConfig.Git.RepoSource)
 	if err != nil {
 		return
 	}
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_OWNER", builderConfig.Git.RepoOwner)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_OWNER", builderConfig.Git.RepoOwner)
 	if err != nil {
 		return
 	}
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_NAME", builderConfig.Git.RepoName)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_NAME", builderConfig.Git.RepoName)
 	if err != nil {
 		return
 	}
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_FULLNAME", fmt.Sprintf("%v/%v", builderConfig.Git.RepoOwner, builderConfig.Git.RepoName))
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_FULLNAME", fmt.Sprintf("%v/%v", builderConfig.Git.RepoOwner, builderConfig.Git.RepoName))
 	if err != nil {
 		return
 	}
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_BRANCH", builderConfig.Git.RepoBranch)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_BRANCH", builderConfig.Git.RepoBranch)
 	if err != nil {
 		return
 	}
 	// set dns safe version
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_BRANCH_DNS_SAFE", h.makeDNSLabelSafe(builderConfig.Git.RepoBranch))
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_BRANCH_DNS_SAFE", h.makeDNSLabelSafe(builderConfig.Git.RepoBranch))
 	if err != nil {
 		return
 	}
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_REVISION", builderConfig.Git.RepoRevision)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_REVISION", builderConfig.Git.RepoRevision)
 	if err != nil {
 		return
 	}
-	err = h.setEstafetteEnv("ESTAFETTE_BUILD_VERSION", builderConfig.Version.Version)
+	err = h.setZiplineeEnv("ZIPLINEE_BUILD_VERSION", builderConfig.Version.Version)
 	if err != nil {
 		return
 	}
 	if builderConfig.Version != nil && builderConfig.Version.Major != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_VERSION_MAJOR", strconv.Itoa(*builderConfig.Version.Major))
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_VERSION_MAJOR", strconv.Itoa(*builderConfig.Version.Major))
 		if err != nil {
 			return
 		}
 	}
 	if builderConfig.Version != nil && builderConfig.Version.Minor != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_VERSION_MINOR", strconv.Itoa(*builderConfig.Version.Minor))
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_VERSION_MINOR", strconv.Itoa(*builderConfig.Version.Minor))
 		if err != nil {
 			return
 		}
 	}
 	if builderConfig.Version != nil && builderConfig.Version.AutoIncrement != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_VERSION_PATCH", strconv.Itoa(*builderConfig.Version.AutoIncrement))
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_VERSION_PATCH", strconv.Itoa(*builderConfig.Version.AutoIncrement))
 		if err != nil {
 			return
 		}
 	}
 	if builderConfig.Version != nil && builderConfig.Version.Label != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_VERSION_LABEL", *builderConfig.Version.Label)
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_VERSION_LABEL", *builderConfig.Version.Label)
 		if err != nil {
 			return
 		}
@@ -213,38 +213,38 @@ func (h *envvarHelper) SetEstafetteBuilderConfigEnvvars(builderConfig contracts.
 
 	// set counters to enable release locking for older revisions inside extensions
 	if builderConfig.Version != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_CURRENT_COUNTER", strconv.Itoa(builderConfig.Version.CurrentCounter))
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_CURRENT_COUNTER", strconv.Itoa(builderConfig.Version.CurrentCounter))
 		if err != nil {
 			return
 		}
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_MAX_COUNTER", strconv.Itoa(builderConfig.Version.MaxCounter))
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_MAX_COUNTER", strconv.Itoa(builderConfig.Version.MaxCounter))
 		if err != nil {
 			return
 		}
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_MAX_COUNTER_CURRENT_BRANCH", strconv.Itoa(builderConfig.Version.MaxCounterCurrentBranch))
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_MAX_COUNTER_CURRENT_BRANCH", strconv.Itoa(builderConfig.Version.MaxCounterCurrentBranch))
 		if err != nil {
 			return
 		}
 	}
 
 	if builderConfig.Build != nil {
-		// set ESTAFETTE_BUILD_ID for backwards compatibility with extensions/github-status and extensions/bitbucket-status and extensions/slack-build-status
-		err = h.setEstafetteEnv("ESTAFETTE_BUILD_ID", builderConfig.Build.ID)
+		// set ZIPLINEE_BUILD_ID for backwards compatibility with extensions/github-status and extensions/bitbucket-status and extensions/slack-build-status
+		err = h.setZiplineeEnv("ZIPLINEE_BUILD_ID", builderConfig.Build.ID)
 		if err != nil {
 			return
 		}
 	}
 	if builderConfig.Release != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_RELEASE_NAME", builderConfig.Release.Name)
+		err = h.setZiplineeEnv("ZIPLINEE_RELEASE_NAME", builderConfig.Release.Name)
 		if err != nil {
 			return
 		}
-		err = h.setEstafetteEnv("ESTAFETTE_RELEASE_ACTION", builderConfig.Release.Action)
+		err = h.setZiplineeEnv("ZIPLINEE_RELEASE_ACTION", builderConfig.Release.Action)
 		if err != nil {
 			return
 		}
-		// set ESTAFETTE_RELEASE_ID for backwards compatibility with extensions/slack-build-status
-		err = h.setEstafetteEnv("ESTAFETTE_RELEASE_ID", builderConfig.Release.ID)
+		// set ZIPLINEE_RELEASE_ID for backwards compatibility with extensions/slack-build-status
+		err = h.setZiplineeEnv("ZIPLINEE_RELEASE_ID", builderConfig.Release.ID)
 		if err != nil {
 			return
 		}
@@ -257,34 +257,34 @@ func (h *envvarHelper) SetEstafetteBuilderConfigEnvvars(builderConfig contracts.
 				}
 			}
 		}
-		err = h.setEstafetteEnv("ESTAFETTE_RELEASE_TRIGGERED_BY", triggeredBy)
+		err = h.setZiplineeEnv("ZIPLINEE_RELEASE_TRIGGERED_BY", triggeredBy)
 		if err != nil {
 			return
 		}
 	}
 	if builderConfig.Bot != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_BOT_NAME", builderConfig.Bot.Name)
+		err = h.setZiplineeEnv("ZIPLINEE_BOT_NAME", builderConfig.Bot.Name)
 		if err != nil {
 			return
 		}
-		err = h.setEstafetteEnv("ESTAFETTE_BOT_ID", builderConfig.Bot.ID)
+		err = h.setZiplineeEnv("ZIPLINEE_BOT_ID", builderConfig.Bot.ID)
 		if err != nil {
 			return
 		}
 	}
 
-	// set ESTAFETTE_CI_SERVER_BASE_URL for backwards compatibility with extensions/github-status and extensions/bitbucket-status and extensions/slack-build-status
+	// set ZIPLINEE_CI_SERVER_BASE_URL for backwards compatibility with extensions/github-status and extensions/bitbucket-status and extensions/slack-build-status
 	if builderConfig.CIServer != nil {
-		err = h.setEstafetteEnv("ESTAFETTE_CI_SERVER_BASE_URL", builderConfig.CIServer.BaseURL)
+		err = h.setZiplineeEnv("ZIPLINEE_CI_SERVER_BASE_URL", builderConfig.CIServer.BaseURL)
 		if err != nil {
 			return
 		}
 	}
 
-	return h.setEstafetteEventEnvvars(builderConfig.Events)
+	return h.setZiplineeEventEnvvars(builderConfig.Events)
 }
 
-func (h *envvarHelper) setEstafetteEventEnvvars(events []manifest.EstafetteEvent) (err error) {
+func (h *envvarHelper) setZiplineeEventEnvvars(events []manifest.ZiplineeEvent) (err error) {
 
 	for _, e := range events {
 		triggerFields := reflect.TypeOf(e)
@@ -310,7 +310,7 @@ func (h *envvarHelper) setEstafetteEventEnvvars(events []manifest.EstafetteEvent
 				triggerPropertyField := triggerPropertyFields.Field(j).Name
 				triggerPropertyValue := triggerPropertyValues.Field(j)
 
-				envvarName := "ESTAFETTE_TRIGGER_" + foundation.ToUpperSnakeCase(triggerField) + "_" + foundation.ToUpperSnakeCase(triggerPropertyField)
+				envvarName := "ZIPLINEE_TRIGGER_" + foundation.ToUpperSnakeCase(triggerField) + "_" + foundation.ToUpperSnakeCase(triggerPropertyField)
 				envvarValue := ""
 
 				switch triggerPropertyValue.Kind() {
@@ -324,7 +324,7 @@ func (h *envvarHelper) setEstafetteEventEnvvars(events []manifest.EstafetteEvent
 				}
 
 				if e.Fired {
-					err = h.setEstafetteEnv(envvarName, envvarValue)
+					err = h.setZiplineeEnv(envvarName, envvarValue)
 					if err != nil {
 						return
 					}
@@ -332,8 +332,8 @@ func (h *envvarHelper) setEstafetteEventEnvvars(events []manifest.EstafetteEvent
 
 				if e.Name != "" {
 					// set envvar for named trigger/event, in order to have upstream pipelines and release when they're not fired as well
-					envvarName := "ESTAFETTE_TRIGGER_" + foundation.ToUpperSnakeCase(e.Name) + "_" + foundation.ToUpperSnakeCase(triggerPropertyField)
-					err = h.setEstafetteEnv(envvarName, envvarValue)
+					envvarName := "ZIPLINEE_TRIGGER_" + foundation.ToUpperSnakeCase(e.Name) + "_" + foundation.ToUpperSnakeCase(triggerPropertyField)
+					err = h.setZiplineeEnv(envvarName, envvarValue)
 					if err != nil {
 						return
 					}
@@ -350,50 +350,50 @@ func (h *envvarHelper) getGitOrigin() (string, error) {
 }
 
 func (h *envvarHelper) initGitSource() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_GIT_SOURCE") == "" {
+	if h.getZiplineeEnv("ZIPLINEE_GIT_SOURCE") == "" {
 		origin, err := h.getGitOrigin()
 		if err != nil {
 			return err
 		}
 		source := h.getSourceFromOrigin(origin)
-		return h.setEstafetteEnv("ESTAFETTE_GIT_SOURCE", source)
+		return h.setZiplineeEnv("ZIPLINEE_GIT_SOURCE", source)
 	}
 	return
 }
 
 func (h *envvarHelper) initGitOwner() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_GIT_OWNER") == "" {
+	if h.getZiplineeEnv("ZIPLINEE_GIT_OWNER") == "" {
 		origin, err := h.getGitOrigin()
 		if err != nil {
 			return err
 		}
 		owner := h.getOwnerFromOrigin(origin)
-		return h.setEstafetteEnv("ESTAFETTE_GIT_OWNER", owner)
+		return h.setZiplineeEnv("ZIPLINEE_GIT_OWNER", owner)
 	}
 	return
 }
 
 func (h *envvarHelper) initGitName() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_GIT_NAME") == "" {
+	if h.getZiplineeEnv("ZIPLINEE_GIT_NAME") == "" {
 		origin, err := h.getGitOrigin()
 		if err != nil {
 			return err
 		}
 		name := h.getNameFromOrigin(origin)
-		return h.setEstafetteEnv("ESTAFETTE_GIT_NAME", name)
+		return h.setZiplineeEnv("ZIPLINEE_GIT_NAME", name)
 	}
 	return
 }
 
 func (h *envvarHelper) initGitFullName() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_GIT_FULLNAME") == "" {
+	if h.getZiplineeEnv("ZIPLINEE_GIT_FULLNAME") == "" {
 		origin, err := h.getGitOrigin()
 		if err != nil {
 			return err
 		}
 		owner := h.getOwnerFromOrigin(origin)
 		name := h.getNameFromOrigin(origin)
-		return h.setEstafetteEnv("ESTAFETTE_GIT_FULLNAME", fmt.Sprintf("%v/%v", owner, name))
+		return h.setZiplineeEnv("ZIPLINEE_GIT_FULLNAME", fmt.Sprintf("%v/%v", owner, name))
 	}
 	return
 }
@@ -419,17 +419,17 @@ func (h *envvarHelper) SetPipelineName(builderConfig contracts.BuilderConfig) (e
 		return nil
 	}
 
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_SOURCE", builderConfig.Git.RepoSource)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_SOURCE", builderConfig.Git.RepoSource)
 	if err != nil {
 		return
 	}
 
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_OWNER", builderConfig.Git.RepoOwner)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_OWNER", builderConfig.Git.RepoOwner)
 	if err != nil {
 		return
 	}
 
-	err = h.setEstafetteEnv("ESTAFETTE_GIT_NAME", builderConfig.Git.RepoName)
+	err = h.setZiplineeEnv("ZIPLINEE_GIT_NAME", builderConfig.Git.RepoName)
 	if err != nil {
 		return
 	}
@@ -439,9 +439,9 @@ func (h *envvarHelper) SetPipelineName(builderConfig contracts.BuilderConfig) (e
 
 func (h *envvarHelper) GetPipelineName() string {
 
-	source := h.getEstafetteEnv("ESTAFETTE_GIT_SOURCE")
-	owner := h.getEstafetteEnv("ESTAFETTE_GIT_OWNER")
-	name := h.getEstafetteEnv("ESTAFETTE_GIT_NAME")
+	source := h.getZiplineeEnv("ZIPLINEE_GIT_SOURCE")
+	owner := h.getZiplineeEnv("ZIPLINEE_GIT_OWNER")
+	name := h.getZiplineeEnv("ZIPLINEE_GIT_NAME")
 
 	if source == "" || owner == "" || name == "" {
 		log.Fatal().Msg("Git environment variables have not been set yet, cannot resolve pipeline name")
@@ -487,45 +487,45 @@ func (h *envvarHelper) getNameFromOrigin(origin string) string {
 }
 
 func (h *envvarHelper) initGitRevision() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_GIT_REVISION") == "" {
+	if h.getZiplineeEnv("ZIPLINEE_GIT_REVISION") == "" {
 		revision, err := h.getCommandOutput("git", "rev-parse", "HEAD")
 		if err != nil {
 			return err
 		}
-		return h.setEstafetteEnv("ESTAFETTE_GIT_REVISION", revision)
+		return h.setZiplineeEnv("ZIPLINEE_GIT_REVISION", revision)
 	}
 	return
 }
 
 func (h *envvarHelper) initGitBranch() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_GIT_BRANCH") == "" {
+	if h.getZiplineeEnv("ZIPLINEE_GIT_BRANCH") == "" {
 		branch, err := h.getCommandOutput("git", "rev-parse", "--abbrev-ref", "HEAD")
 		if err != nil {
 			return err
 		}
-		return h.setEstafetteEnv("ESTAFETTE_GIT_BRANCH", branch)
+		return h.setZiplineeEnv("ZIPLINEE_GIT_BRANCH", branch)
 	}
 	return
 }
 
 func (h *envvarHelper) initBuildDatetime() (err error) {
-	if h.getEstafetteEnv("ESTAFETTE_BUILD_DATETIME") == "" {
-		return h.setEstafetteEnv("ESTAFETTE_BUILD_DATETIME", time.Now().UTC().Format(time.RFC3339))
+	if h.getZiplineeEnv("ZIPLINEE_BUILD_DATETIME") == "" {
+		return h.setZiplineeEnv("ZIPLINEE_BUILD_DATETIME", time.Now().UTC().Format(time.RFC3339))
 	}
 	return
 }
 
 func (h *envvarHelper) initBuildStatus() (err error) {
-	return h.setEstafetteEnv("ESTAFETTE_BUILD_STATUS", "succeeded")
+	return h.setZiplineeEnv("ZIPLINEE_BUILD_STATUS", "succeeded")
 }
 
-func (h *envvarHelper) initLabels(m manifest.EstafetteManifest) (err error) {
+func (h *envvarHelper) initLabels(m manifest.ZiplineeManifest) (err error) {
 
 	// set labels as envvars
 	if m.Labels != nil && len(m.Labels) > 0 {
 		for key, value := range m.Labels {
-			envvarName := "ESTAFETTE_LABEL_" + foundation.ToUpperSnakeCase(key)
-			err = h.setEstafetteEnv(envvarName, value)
+			envvarName := "ZIPLINEE_LABEL_" + foundation.ToUpperSnakeCase(key)
+			err = h.setZiplineeEnv(envvarName, value)
 			if err != nil {
 				return
 			}
@@ -535,7 +535,7 @@ func (h *envvarHelper) initLabels(m manifest.EstafetteManifest) (err error) {
 	return
 }
 
-func (h *envvarHelper) CollectEstafetteEnvvarsAndLabels(m manifest.EstafetteManifest) (envvars map[string]string, err error) {
+func (h *envvarHelper) CollectZiplineeEnvvarsAndLabels(m manifest.ZiplineeManifest) (envvars map[string]string, err error) {
 
 	// set labels as envvars
 	err = h.initLabels(m)
@@ -543,13 +543,13 @@ func (h *envvarHelper) CollectEstafetteEnvvarsAndLabels(m manifest.EstafetteMani
 		return
 	}
 
-	// return all envvars starting with ESTAFETTE_
-	return h.collectEstafetteEnvvars(), nil
+	// return all envvars starting with ZIPLINEE_
+	return h.collectZiplineeEnvvars(), nil
 }
 
-func (h *envvarHelper) collectEstafetteEnvvars() (envvars map[string]string) {
+func (h *envvarHelper) collectZiplineeEnvvars() (envvars map[string]string) {
 
-	// return all envvars starting with ESTAFETTE_
+	// return all envvars starting with ZIPLINEE_
 	envvars = map[string]string{}
 
 	for _, e := range os.Environ() {
@@ -568,7 +568,7 @@ func (h *envvarHelper) collectEstafetteEnvvars() (envvars map[string]string) {
 	return
 }
 
-func (h *envvarHelper) CollectGlobalEnvvars(m manifest.EstafetteManifest) (envvars map[string]string) {
+func (h *envvarHelper) CollectGlobalEnvvars(m manifest.ZiplineeManifest) (envvars map[string]string) {
 
 	envvars = map[string]string{}
 
@@ -580,20 +580,20 @@ func (h *envvarHelper) CollectGlobalEnvvars(m manifest.EstafetteManifest) (envva
 }
 
 // only to be used from unit tests
-func (h *envvarHelper) UnsetEstafetteEnvvars() {
+func (h *envvarHelper) UnsetZiplineeEnvvars() {
 
-	envvarsToUnset := h.collectEstafetteEnvvars()
+	envvarsToUnset := h.collectZiplineeEnvvars()
 	for key := range envvarsToUnset {
-		err := h.unsetEstafetteEnv(key)
+		err := h.unsetZiplineeEnv(key)
 		if err != nil {
 			log.Warn().Err(err).Msgf("Failed unseeting envvar %v", key)
 		}
 	}
 }
 
-func (h *envvarHelper) getEstafetteEnv(key string) string {
+func (h *envvarHelper) getZiplineeEnv(key string) string {
 
-	key = h.getEstafetteEnvvarName(key)
+	key = h.getZiplineeEnvvarName(key)
 
 	if strings.HasPrefix(key, h.prefix) {
 		return os.Getenv(key)
@@ -602,9 +602,9 @@ func (h *envvarHelper) getEstafetteEnv(key string) string {
 	return fmt.Sprintf("${%v}", key)
 }
 
-func (h *envvarHelper) setEstafetteEnv(key, value string) error {
+func (h *envvarHelper) setZiplineeEnv(key, value string) error {
 
-	key = h.getEstafetteEnvvarName(key)
+	key = h.getZiplineeEnvvarName(key)
 
 	err := os.Setenv(key, value)
 	if err != nil {
@@ -614,15 +614,15 @@ func (h *envvarHelper) setEstafetteEnv(key, value string) error {
 	return nil
 }
 
-func (h *envvarHelper) unsetEstafetteEnv(key string) error {
+func (h *envvarHelper) unsetZiplineeEnv(key string) error {
 
-	key = h.getEstafetteEnvvarName(key)
+	key = h.getZiplineeEnvvarName(key)
 
 	return os.Unsetenv(key)
 }
 
-func (h *envvarHelper) getEstafetteEnvvarName(key string) string {
-	return strings.Replace(key, "ESTAFETTE_", h.prefix, -1)
+func (h *envvarHelper) getZiplineeEnvvarName(key string) string {
+	return strings.Replace(key, "ZIPLINEE_", h.prefix, -1)
 }
 
 func (h *envvarHelper) OverrideEnvvars(envvarMaps ...map[string]string) (envvars map[string]string) {

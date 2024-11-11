@@ -16,11 +16,11 @@ type ContainerRunner interface {
 	HasInjectedCredentials(stageName string, containerImage string) bool
 	PullImage(ctx context.Context, stageName, parentStageName string, containerImage string) error
 	GetImageSize(ctx context.Context, containerImage string) (int64, error)
-	StartStageContainer(ctx context.Context, depth int, dir string, envvars map[string]string, stage manifest.EstafetteStage, stageIndex int) (containerID string, err error)
-	StartServiceContainer(ctx context.Context, envvars map[string]string, service manifest.EstafetteService) (containerID string, err error)
-	RunReadinessProbeContainer(ctx context.Context, parentStage manifest.EstafetteStage, service manifest.EstafetteService, readiness manifest.ReadinessProbe) (err error)
+	StartStageContainer(ctx context.Context, depth int, dir string, envvars map[string]string, stage manifest.ZiplineeStage, stageIndex int) (containerID string, err error)
+	StartServiceContainer(ctx context.Context, envvars map[string]string, service manifest.ZiplineeService) (containerID string, err error)
+	RunReadinessProbeContainer(ctx context.Context, parentStage manifest.ZiplineeStage, service manifest.ZiplineeService, readiness manifest.ReadinessProbe) (err error)
 	TailContainerLogs(ctx context.Context, containerID, parentStageName, stageName string, stageType contracts.LogType, depth int, multiStage *bool) (err error)
-	StopSingleStageServiceContainers(ctx context.Context, parentStage manifest.EstafetteStage)
+	StopSingleStageServiceContainers(ctx context.Context, parentStage manifest.ZiplineeStage)
 	StopMultiStageServiceContainers(ctx context.Context)
 	StartDockerDaemon() error
 	WaitForDockerDaemon()

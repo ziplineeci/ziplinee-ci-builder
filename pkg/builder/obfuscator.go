@@ -15,7 +15,7 @@ const maxLengthToSkipObfuscation = 3
 
 // Obfuscator hides secret values and other sensitive stuff from the logs
 type Obfuscator interface {
-	CollectSecrets(manifest manifest.EstafetteManifest, credentialsBytes []byte, pipeline string) (err error)
+	CollectSecrets(manifest manifest.ZiplineeManifest, credentialsBytes []byte, pipeline string) (err error)
 	Obfuscate(input string) string
 	ObfuscateSecrets(input string) string
 }
@@ -33,7 +33,7 @@ func NewObfuscator(secretHelper crypt.SecretHelper) Obfuscator {
 	}
 }
 
-func (ob *obfuscator) CollectSecrets(manifest manifest.EstafetteManifest, credentialsBytes []byte, pipeline string) (err error) {
+func (ob *obfuscator) CollectSecrets(manifest manifest.ZiplineeManifest, credentialsBytes []byte, pipeline string) (err error) {
 
 	log.Debug().Msgf("Collecting secrets and checking if they're valid for pipeline %v...", pipeline)
 
@@ -124,7 +124,7 @@ func (ob *obfuscator) Obfuscate(input string) string {
 
 func (ob *obfuscator) ObfuscateSecrets(input string) string {
 
-	r, err := regexp.Compile(`estafette\.secret\(([a-zA-Z0-9.=_-]+)\)`)
+	r, err := regexp.Compile(`ziplinee\.secret\(([a-zA-Z0-9.=_-]+)\)`)
 	if err != nil {
 		return input
 	}

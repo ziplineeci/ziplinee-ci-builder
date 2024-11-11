@@ -1,16 +1,16 @@
 FROM mcr.microsoft.com/windows/nanoserver:1809
 
-COPY ./estafette-ci-builder.exe C:/estafette-ci-builder.exe
+COPY ./ziplinee-ci-builder.exe C:/ziplinee-ci-builder.exe
 COPY ./templates C:/entrypoint-templates
 
-ENV ESTAFETTE_CI_SERVER="estafette" \
-    ESTAFETTE_WORKDIR="C:/estafette-work" \
-    ESTAFETTE_LOG_FORMAT="v3"
+ENV ZIPLINEE_CI_SERVER="ziplinee" \
+    ZIPLINEE_WORKDIR="C:/ziplinee-work" \
+    ZIPLINEE_LOG_FORMAT="v3"
 
 USER ContainerAdministrator
 
-WORKDIR ${ESTAFETTE_WORKDIR}
+WORKDIR ${ZIPLINEE_WORKDIR}
 
 ENV DOCKER_API_VERSION 1.40
 
-ENTRYPOINT ["C:/estafette-ci-builder.exe"]
+ENTRYPOINT ["C:/ziplinee-ci-builder.exe"]
