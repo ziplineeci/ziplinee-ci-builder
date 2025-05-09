@@ -18,14 +18,14 @@ RUN addgroup docker \
     && docker version || true
 
 # copy builder & startup script
-COPY publish/${ZIPLINEE_GIT_NAME} /
+COPY publish/ziplinee-ci-builder /
 COPY templates /entrypoint-templates
 COPY daemon.json /
 
 
-WORKDIR ${ZIPLINEE_WORKDIR}
+WORKDIR /ziplinee-work
 
 VOLUME /tmp
 VOLUME /ziplinee-work
 
-ENTRYPOINT ["/${ZIPLINEE_GIT_NAME}"]
+ENTRYPOINT ["/ziplinee-ci-builder"]

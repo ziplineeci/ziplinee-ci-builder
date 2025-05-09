@@ -2,7 +2,7 @@
 *.o
 *.a
 *.so
-estafette-ci-builder
+ziplinee-ci-builder
 
 # Folders
 _obj
