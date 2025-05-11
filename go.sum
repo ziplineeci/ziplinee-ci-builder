@@ -645,8 +645,8 @@ github.com/ziplineeci/ziplinee-ci-crypt v0.0.2 h1:6l16JQEDG/EjYC5pWaXWjOPbxgAc6M
 github.com/ziplineeci/ziplinee-ci-crypt v0.0.2/go.mod h1:mCcUXnFHqX+N1UZQebTfuiFoJqtXZLg10EHaeozE7Hk=
 github.com/ziplineeci/ziplinee-ci-manifest v0.0.2 h1:Pm7hBUW/vNoD7mPw7EPVya9LUAsi+7wh81aBx4Pm1/g=
 github.com/ziplineeci/ziplinee-ci-manifest v0.0.2/go.mod h1:WjJY8BGiWeHFaWdZEKxt5jyEpknKxoCcTbvIKHJHwW4=
-github.com/ziplineeci/ziplinee-foundation v0.0.1 h1:xzOY6hNZgVvMRkLM/QcIbz334VM/E/DAdjQbAoG6M7Y=
-github.com/ziplineeci/ziplinee-foundation v0.0.1/go.mod h1:JasymJRikkxcED0bPnrOPinXaNgVLJ3na+Ya2uQDQKs=
+github.com/ziplineeci/ziplinee-foundation v0.0.2 h1:AxXS8OpVb/pd1/qgUet+0ZImRzbY7Db+EmjNGbUjK14=
+github.com/ziplineeci/ziplinee-foundation v0.0.2/go.mod h1:0S47BEowT8Gs+yGjY5v1srgdFTilQ5niGtsQhIRVHwg=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.5/go.mod h1:G5EMThwa9y8QZGBClrRx5EY+Yw9kAhnjy3bSjsnlVTQ=
