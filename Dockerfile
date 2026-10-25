@@ -17,6 +17,9 @@ RUN addgroup docker \
     && rm -rf /var/cache/apk/* \
     && docker version || true
 
+# docker:20.10 is on an EOL Alpine; take the CA bundle from a current one (eMudhra intermediate compromise)
+COPY --from=alpine:3.24.3 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
 # copy builder & startup script
 COPY publish/ziplinee-ci-builder /
 COPY templates /entrypoint-templates
